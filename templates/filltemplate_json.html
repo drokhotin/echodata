@@ -1,0 +1,62 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: {{ patient.surname }} {{ patient.name }} {{ patient.fathername }} {% endblock %}
+{% block style %}
+
+<style>
+@import "/static/scripts/jsonform-jsonform-1dd0395/deps/opt/bootstrap.css";
+@import "/static/scripts/jsonform-jsonform-1dd0395/deps/opt/bootstrap-wysihtml5.css";
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="w3-container">
+
+<form method="post" class="form">
+</form>
+
+</div>
+
+<script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/deps/jquery.min.js"></script>
+<script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/deps/underscore.js"></script>
+<script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/deps/opt/jsv.js"></script>
+<script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/lib/jsonform.js"></script>
+<script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/deps/opt/jquery-ui.js"></script>
+
+<script type="text/javascript">
+
+  $('form').jsonForm(    {{ template.contents|safe }}  
+   )
+
+</script>
+
+
+<script>
+    function showhide(id) {
+        element=document.getElementById(id);
+        sign=document.getElementById(id+'s');
+        if (element.style.display=="none") {
+            element.style.display="block";
+            sign.innerHTML="&#9207;"
+        }
+        else {
+            element.style.display="none";
+            sign.innerHTML="&#9205;"
+        }
+
+    }
+
+
+</script>
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+

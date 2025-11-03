@@ -1,0 +1,62 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0 {% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+
+
+
+
+
+
+
+<a href='{{ url_for('wardprintrx', wid=wid) }}' id='print' target='_blank'></a>
+<table class="w3-table w3-hoverable w3-striped w3-small" id="table">
+
+
+
+{% for status in patients | sort(attribute='location') %}
+    <tr onclick="getElementById('a{{ status.id }}').click()" id="rline{{ status.id }}" class="recordrow{{ ' w3-teal' if loop.index==1 }}">
+        <td> {{ loop.index }} </td>
+        <td>
+            <a href="{{ url_for('status', sid=status.id) }}" id="a{{ status.id }}"  target='right'></a>
+            {{ status.patient.surname }} {{ status.patient.name[0:2] }} {{ status.patient.fathername[0:2] }}
+        </td>
+        <td>{{ status.admission|beddays }} к/д
+        </td>
+        <td>
+            {{ status.datemodified|datetime('date') }}
+        </td>
+        <td>
+            {{ status.location }}
+        </td>
+    </tr>
+
+{% endfor %}
+
+
+</table>
+
+<script>
+document.onkeydown = function(e) {
+    if (e.ctrlKey && e.which == 80) {
+        e.preventDefault();
+        var doc=document.getElementById('rightframe');
+        var innerDoc = doc.contentDocument || doc.contentWindow.document;
+        innerDoc.getElementById('print').click();
+        }
+}
+</script>
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+

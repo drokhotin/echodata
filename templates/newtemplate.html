@@ -1,0 +1,53 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: создать новый шаблон{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+
+
+<form method="post" class="w3-container w3-card w3-light-grey w3-text-green w3-margin">
+    <h2>Новый шаблон</h2>
+
+
+
+    <input class="w3-input" type=text name=title   oninput="notSaved()" id=title>
+    <label class="w3-label">Название</label>
+
+    <p><input class="w3-input" type=text name=sort   oninput="notSaved()" id=sort>
+    <label class="w3-label">Тип шаблона (исследование, дневник, консультация, анализ, другое)</label>
+
+    <p><input class="w3-input" type=text name=comments   oninput="notSaved()" id=comments>
+    <label class="w3-label">Комментарий</label>
+
+    <p><textarea class="w3-input" name=contents oninput="notSaved()" id=contents1 style="height:80%;"></textarea>
+    <label class="w3-label">Шаблон</label>
+
+    <p><input class="w3-input" type=hidden name=id value="{{ id }}">
+    <p id=saved></p>
+    <p><input class="w3-button w3-green" type=submit value=Сохранить></p>
+
+
+</form>
+
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+
+
+</div></main>
+
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  </body>
+</html>

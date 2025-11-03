@@ -1,0 +1,73 @@
+{% extends "basic-2.html" %}
+{% set active_page = "patients" %}
+
+{% block title %}Эходата 3.0{% endblock %}
+
+
+{% block top %}
+<div class="w3-container">
+<a href="/editpatient/{{ patient.id }}" target="right" class="w3-button w3-blue">
+{{ patient.surname }} {{ patient.name }} {{ patient.fathername }},
+{{ patient.dob|datetime('age') }}
+({{ patient.dob|datetime('date') }})</a>
+
+<a href="/newrecord/{{ patient.id }}" target='right' class="w3-button w3-green">Новое исследование</a>
+<a href="/newform/{{ patient.id }}" target='right' class="w3-button w3-green">Новая форма</a>
+<a href="/chooseform/{{ patient.id }}" target='right' class="w3-button w3-green">Бланк</a>
+
+<div class="w3-dropdown-click">
+  <button onclick="myFunction()" class="w3-button w3-black">Отделения ({{ wards|length }})</button>
+
+  <div id="Demo" class="w3-dropdown-content w3-bar-block w3-border">
+  {% for ward in wards %}
+    <a href="{{ url_for('status', sid=ward.id) }}" class="w3-bar-item w3-button" target='right' onclick="myFunction()">{{ ward.ward.title }}</a>
+  {% endfor %}
+  <a href="{{ url_for('admit', pid= patient.id) }}" target='right' class="w3-button w3-teal" onclick="myFunction()">Госпитализировать</a>
+
+  </div>
+
+
+
+</div>
+
+<script>
+function myFunction() {
+  var x = document.getElementById("Demo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else {
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+</script>
+
+
+
+</div>
+<script>
+    document.onkeydown = function(e) {
+        if (e.ctrlKey && e.which == 80) {
+            e.preventDefault();
+            var doc=document.getElementById('rightframe');
+            var innerDoc = doc.contentDocument || doc.contentWindow.document;
+            innerDoc.getElementById('print').click();
+            }
+    }
+</script>
+
+{% endblock %}
+
+{% block index %}
+  <iframe src="/records/{{ patient.id }}" id="leftframe" name="left" width=100% height=100%></iframe>
+{% endblock %}
+
+{% block content %}
+  <iframe src="/record/{{ rid }}" id="rightframe" name="right" width=100% height=100%></iframe>
+{% endblock %}
+
+
+
+{% block footer %}
+{% endblock %}
+
+

@@ -1,0 +1,125 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0 {% endblock %}
+
+    {% block body_attrs %} {% endblock %}
+
+
+{% block style %}
+
+<style>
+    .nicEdit-main {
+        overflow: auto !important;
+        height: 5.5em;
+        width: 300px;
+    }
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+<div class='w3-container'>
+
+<a href="/record/{{ record.id }}?m=html" id="edit"  target='record'></a>
+<a href="/record/{{ record.id }}?m=markup" id="markup"  target='record'></a>
+
+
+{{ record.title }} | {{ record.recorddate|datetime('medium') }} |
+Пациент: {{ patient.surname }} {{ patient.name }}
+
+<hr>
+
+<div id="contents" style="overflow:auto; height:70%;width:100%;">
+{% for version in versions %}
+
+
+
+<div id = 'ver{{ version.version }}' style='display:none;'>
+
+
+
+  {{ version.html|safe }}
+
+
+
+</div>
+
+
+{% endfor %}
+
+
+<div id = 'ver{{ record.version }}' style='display:none;'>
+  {{ record.html|safe }}
+  </div>
+</div>
+
+
+<hr>
+
+{% for version in versions %}
+
+<span id='ver{{ version.version }}b' style='display:none;'>
+  <button type="button" class="w3-button w3-teal" onclick="prev()">&lt;</button>
+     Версия: {{ version.version }}/{{ record.version }} (от {{ version.modified|datetime('medium') }})
+  <button type="button" class="w3-button w3-teal" onclick="next()">&gt;</button>
+  <button type="button" class="w3-button w3-teal" onclick="getElementById('restore{{ version.version }}').click()">Сделать основной</button>
+  <a href={{ url_for('version', rid=record.id, a='update', v=version.id)|safe }} id="restore{{ version.version }}"></a>
+</span>
+{% endfor %}
+
+<span id='ver{{ record.version }}b' style='display:none;'>
+  <button type="button" onclick="prev()">&lt;</button>
+     <span id='ver'>Версия: {{ record.version }}/{{ record.version }} (от {{ record.modified|datetime('medium') }})</span>
+  <button type="button" onclick="next()">&gt;</button>
+
+</span>
+
+</div>
+
+
+<script>
+var ver={{ versions[-1].version }};
+var verm={{ versions[-1].version }};
+
+document.getElementById('ver{{ versions[-1].version }}').style.display='block';
+document.getElementById('ver{{ versions[-1].version }}b').style.display='inline';
+</script>
+
+<script>
+function next() {
+    if (ver < {{ record.version }}) {
+        document.getElementById('ver'+ver).style.display='none';
+        document.getElementById('ver'+ver+'b').style.display='none';
+        ver=ver+1;
+        document.getElementById('ver'+ver).style.display='block';
+        document.getElementById('ver'+ver+'b').style.display='inline';
+    }
+};
+</script>
+<script>
+function prev() {
+    if (ver > {{ versions[0].version }}) {
+        document.getElementById('ver'+ver).style.display='none';
+        document.getElementById('ver'+ver+'b').style.display='none';
+        ver=ver-1;
+        document.getElementById('ver'+ver).style.display='block';
+        document.getElementById('ver'+ver+'b').style.display='inline';
+    }
+};
+
+
+</script>
+
+
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+

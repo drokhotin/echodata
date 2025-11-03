@@ -1,0 +1,53 @@
+{% extends "basic-2.html" %}
+{% set active_page = "config" %}
+
+{% block title %}Эходата 3.0: шаблоны{% endblock %}
+
+
+{% block top %}
+<div class="w3-container">
+<h2>Настройки шаблонов</h2>
+
+</div>
+
+<script>
+function myFunction() {
+  var x = document.getElementById("Demo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else {
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+</script>
+
+
+
+</div>
+<script>
+    document.onkeydown = function(e) {
+        if (e.ctrlKey && e.which == 80) {
+            e.preventDefault();
+            var doc=document.getElementById('rightframe');
+            var innerDoc = doc.contentDocument || doc.contentWindow.document;
+            innerDoc.getElementById('print').click();
+            }
+    }
+</script>
+
+{% endblock %}
+
+{% block index %}
+  <iframe src="{{ url_for('templates') }}" id="leftframe" name="left" width=100% height=100%></iframe>
+{% endblock %}
+
+{% block content %}
+  <iframe src="" id="rightframe" name="right" width=100% height=100%></iframe>
+{% endblock %}
+
+
+
+{% block footer %}
+{% endblock %}
+
+

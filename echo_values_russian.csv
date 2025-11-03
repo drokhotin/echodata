@@ -1,0 +1,301 @@
+Mitral Valve,Митральный клапан
+MV E pt,МК пик E
+MV A pt,МК пик A
+Dec Time,t спада
+Dec Slope,Наклон спада
+IVRT,t ИВР
+MV Vmax,МК Vмакс
+MV Vmean,МК Vср
+MV PGmax,МК ΔPмакс
+MV PGmean,МК ΔPср
+MV VTI,МК VTI
+MV PHT,МК t½
+E/A,E/A
+A/E,A/E
+MVA(PHT),S МК(по t½)
+MVA(Trace),S МК (обведение)
+HR,ЧСС
+E/Ea(m),E/e' (мед)
+E/Ea(l),E/e' (лат)
+AV/LA,АК/ЛП
+RV diam,ВТЛЖ ПЖ прокс.
+AOd,Ао корень
+ACS,Ао синус.
+LAs diam,КСР ЛП
+AOd/LAs,Aо кор/КСР ЛП
+LAs/AOd,КСР ЛП/Aо кор
+LAs diam-I,КСР ЛП/ППТ
+AOd-I,Ао кор/ППТ
+ACS-I,Ао син/ППТ
+Aortic Valve,Аортальный клапан
+AV VTI,АК VTI
+AV Vmax,АК Vмакс
+AV Vmean,АК Vср
+AV PGmax,АК ΔPмакс
+AV PGmean,АК ΔPср
+LVOT VTI,ВТЛЖ VTI
+LVOT Vmax,ВТЛЖ Vмакс
+LVOT Vmean,ВТЛЖ Vср
+LVOT PGmax,ВТЛЖ ΔPмакс
+LVOT PGmean,ВТЛЖ ΔPср
+IVRT,t ИВР
+LVOT diam,ВТЛЖ
+AVA(VTI),S АК по VTI
+AVA(Vmax),S AК по Vмакс
+SV,УО
+CO,СВ
+SI,УО/ППТ
+CI,СИ
+HR,ЧСС
+LVOT/AV VTI,ВТЛЖ/АК VTI
+Simpson BP,Метод дисков в 2 плоскостях
+EDV,КДО
+ESV,КСО
+SV,УО
+CO,СВ
+EF,ФВ
+SI,УО/ППТ
+CI,СИ
+HR,ЧСС
+EDV2,КДО2
+ESV2,КСО2
+difD(2ch),difD(2ch)
+difS(2ch),difS(2ch)
+EDV4,КДО4
+ESV4,КСО4
+SV4,УО4
+CO4,СВ4
+EF4,ФВ4
+SI4,УО/ППТ4
+CI4,СИ4
+EDV-I,КДО/ППТ
+ESV-I,КСО/ППТ
+EDV2-I,КДО2/ППТ
+ESV2-I,КСО2/ППТ
+EDV4-I,КДО4/ППТ
+ESV4-I,КСО4/ППТ
+Simpson SP,Метод дисков (1 плоскость)
+EDV,КДО
+ESV,КСО
+HR,ЧСС
+EF,ФВ
+SV,УО
+SI,УО/ППТ
+CO,СВ
+CI,СИ
+Mod.Simpson,Модифиц. метод дисков
+LVLd apical,"ЛЖ(д), длина"
+LVAd sxMV,S ЛЖ(д) МК
+LVAd sxPM,S ЛЖ(д) СМ
+LVLs apical,"ЛЖ(с), длина"
+LVAs sxMV,S ЛЖ(с) МК
+LVAs sxPM,S ЛЖ(с) СМ
+HR,ЧСС
+EDV,КДО
+ESV,КСО
+EF,ФВ
+SV,УО
+SI,УО/ППТ
+CO,СВ
+CI,СИ
+Bullet,Метод усеченного эллипсоида
+LVLd apical,"ЛЖ(д), длина"
+LVAd sxMV,S ЛЖ(д) МК
+LVLs apical,"ЛЖ(с), длина"
+LVAs sx MV,S ЛЖ(с) МК
+HR,ЧСС
+EDV,КДО
+ESV,КСО
+RV,ПЖ
+RV diam,ПЖ размер
+LV Mass A-L,Масса ЛЖ (A-L)
+A Sax Epi,S Sax эпи
+A Sax Endo,S Sax эндо
+LVL,Длина ЛЖ
+t,Толщина
+LV Mass,Масса ЛЖ
+LV Mass-I,Масса ЛЖ/ППТ
+LA Vol (A-L),ЛП объем (A-L)
+A1-A4C,S (A4)
+A2-A2C,S (A2)
+L,длина
+LA Vol (A-L),ЛП объем (A-L)
+LA Vol-I,ЛП объем/ППТ
+LA Vol (Simp),ЛП объем (МД)
+4CH,4CH
+2CH,2CH
+LA Vol (Simp),ЛП объем (МД)
+LA Vol-I,ЛП объем/ППТ
+4CH-I,4CH/ППТ
+2CH-I,2CH/ППТ
+RA Vol (Simp),ПП объем (МД)
+4CH,4CH
+2CH,2CH
+RA Vol (Simp),ПП объем (МД)
+RA Vol-I,ПП объем/ППТ
+4CH-I,4CH/ППТ
+Teichholz(2D),Тейхольц (в 2D)
+RVAWd,ССПЖ(д)
+RVDd,КДР ПЖ
+IVSd,МЖП(д)
+LVIDd,КДР ЛЖ
+LVPWd,ЗСЛЖ(д)
+LVIDs,КСР ЛЖ
+EDV,КДО
+ESV,КСО
+HR,ЧСС
+LV Mass,Масса ЛЖ
+LVIDs-I,КСР ЛЖ/ППТ
+LVIDd-I,КДР ЛЖ/ППТ
+LV Mass-I,Масса ЛЖ/ППТ
+RWT,Отн. толщина
+Right ch,Правые камеры
+IVC(D),НПВ
+RVA(D),ПП
+LV/Teich(M),Тейхольц (в М-режиме)
+IVSd,МЖП(д)
+LVIDd,КДР ЛЖ
+LVPWd,ЗСЛЖ(д)
+IVSs,МЖП(с)
+LVIDs,КСР ЛЖ
+LVPWs,ЗСЛЖ(с)
+EDV,КДО
+ESV,КСО
+SV,УО
+EF,ФВ
+FS,ФУ
+SI,УО/ППТ
+LVET,t ИЛЖ
+mVcf,Vср. ЦУ
+LV Mass,Масса ЛЖ
+LV Mass-c,Масса ЛЖ (куб)
+LV Mass-I,Масса ЛЖ/ППТ
+Mitral Valve(M),Митральный клапан (М-режим)
+DE excursion,DE excursion
+EPSS,EPSS
+EF Slope,EF Slope
+AV/LA(M),Аорта/левое предсердие (M-режим)
+AOd,Ао клапан
+ACS,Ао синус.
+LAs diam,КСР ЛП
+AOd/LAs,Aо кор/КСР ЛП
+LAs/AOd,КСР ЛП/Aо кор
+MR,Митральная регургитация
+MR Vmax,МР Vмакс
+MR PGmax,МР ΔPмакс
+dt,dt
+dP/dt,dP/dt
+PISA(MR),PISA (МР)
+Radius,Радиус PISA
+Aliasing Vel,Предел Найквиста
+MR VTI,МР VTI
+MR Vmax,МР Vмакс
+Flow Rate,V потока
+EO Area,S эфф. отверстия (EROA)
+Flow Vol,Объем МР
+PISA(MS),PISA (митральный стеноз)
+Radius,Радиус PISA
+Aliasing Vel,Предел Найквиста
+MS VTI,МС VTI
+MS Vmax,МС Vмакс
+MS PGmax,МС ΔPмакс
+Angle,Угол
+Flow Rate,V потока
+Flow Vol,Объем
+MVA,S МК
+Tricuspid Valve,Трикупидальный клапан
+TV VTI,ТК VTI
+TV Vmax,ТК Vмакс
+TV PGmax,ТК ΔPмакс
+TV Vmean,ТК Vср
+TV PGmean,ТК ΔPср
+TV E pt,ТК пик E
+TV A pt,ТК пик A
+E/A,E/A
+Pulmonary Valve,Клапан легочной артерии
+PV Vmax,КЛА Vмакс
+PV PGmax,КЛА ΔPмакс
+PV Vmean,КЛА Vср
+PV PGmean,КЛА ΔPср
+PV VTI,КЛА VTI
+RVET,t ИПЖ
+RV Act,ПЖ t ускорения
+RV PEP,ПЖ t предизгнания
+PV diam,ЛА диаметр
+SV,УО
+CO,СВ
+SI,УО/ППТ
+CI,СИ
+RVSTI,RV t систолы
+RV Acc T/ET,RV Acc T/ET
+PA Act,ЛА t ускорения
+HR,ЧСС
+Pulmonary Vein,Легочные вены
+PVs1 Vel,ЛВ (с) V
+PVd Vel,ЛВ (д) V
+PVa Vel,ЛА (п/с) V
+PVa Dur,ЛА (п/с) t (Adur)
+PVd Dect,ЛВ (д) t спада
+AR,Аортальная регургитация
+AR DT,АР t спада
+AR Vmax,АР Vмакс
+AR PGmax,АР ΔPмакс
+AR V ed,АР КД-V
+AR Duration,АР t
+Decel Rate,V спада
+AI Vmax,АР Vмакс
+AI PGmax,АР ΔPмакс
+AI PHT,АР t½
+AI Dec Time,АР t спада
+AI Dec Slope,АР наклон
+TR,Трикуспидальная регургитация
+TR Vmax,ТР Vмакс
+TR Vmean,ТР Vср
+TR VTI,ТР VTI
+RAP,Давление ПП
+TR PGmax,ТР ΔPмакс
+TR PGmean,ТР ΔPср
+RVSP,СДЛА
+PR,Легочная регургитация 
+PR Ved,ЛР V КД
+RAP,Давл. в ПП
+PAEDP,КДД в ЛА
+DTI,Тканевой допплер
+Ea(m),e' мед
+Aa(m),a' мед
+Sa(m),s' мед
+Ea(l),e' лат
+Aa(l),a' лат
+Sa(l),s' лат
+Ea/Aa(m),e'/a' мед
+E/Ea(m),E/e' мед
+Ea/Aa(l),e'/a' лат
+E/Ea(l),E/e' лат
+Tei Index,Индекс Тей
+LVIMP,иТей ЛЖ
+LVET,ЛЖ t изгн.
+MV C-O dur,МК t закр-откр
+RVIMP,иТей ПЖ
+RVET,ПЖ t изгн.
+TV C-O dur,ТК t закр-откр
+m/s,м/с
+ms,мс
+m/s²,м/с²
+mmHg,мм рт. ст.
+cm,см
+cm²,см²
+bpm,в мин
+mm,мм
+mm/m²,мм/м²
+mL,мл
+L/min,л/мин
+mL/m²,мл/м²
+%,%
+g,г
+g/m²,г/м²
+circ/s,об/с
+mm/s,мм/с
+mmHg/s,мм рт. ст./с
+cm/s,см/с
+mL/s,мл/с
+mm²,мм²

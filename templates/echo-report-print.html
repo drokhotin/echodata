@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+        <style>
+        /* Base styles */
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.5in;
+            background-color: white;
+            font-size: 13pt;
+        }
+        
+        /* Section titles */
+        h2 {
+            font-size: 1.4em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.3em;
+            margin: 1.5em 0 1em 0;
+            page-break-after: avoid;
+        }
+        
+        /* Two column layout */
+        .two-columns {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5em;
+            page-break-inside: avoid;
+        }
+        
+        .column-left {
+            width: 58%; /* Slightly less than 60% to account for spacing */
+        }
+        
+        .column-right {
+            width: 40%;
+        }
+        
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: avoid;
+            margin-bottom: 1em;
+        }
+        
+        th, td {
+            padding: 0.4em;
+            text-align: left;
+            vertical-align: top;
+            border: none;
+            font-size: 12pt;
+        }
+        
+        /* Header row styling */
+        th {
+            border-bottom: 1px solid #ddd;
+        }
+        
+        /* Zebra striping for rows */
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* no breaking cells */
+        .no-break-cell {
+            white-space: nowrap;
+        
+        }
+        
+        /* Column span styling */
+        .colspan-all {
+            font-style: italic;
+            border-top: 1px solid #ddd;
+            padding-top: 0.6em;
+        }
+        
+        /* Description styling */
+        .description {
+            margin-bottom: 1.5em;
+            font-size: 12pt;
+        }
+        
+        /* Print-specific styles */
+        @media print {
+            body {
+                padding: 0.3in;
+                margin: 0;
+                font-size: 10pt;
+                line-height: 1.2;
+            }
+            
+            h2 {
+                font-size: 1.1em;
+                border-bottom: 1px solid #999;
+            }
+            
+            .two-columns {
+                page-break-inside: avoid;
+            }
+            
+            /* Avoid breaking inside important elements */
+            table, .description {
+                page-break-inside: avoid;
+            }
+            
+            th, td {
+                padding: 0.3em;
+                font-size: 9pt;
+                border: none;
+            }
+            
+            .description {
+                font-size: 9pt;
+            }
+            
+            /* Remove backgrounds for printing */
+            tr:nth-child(even) {
+                background-color: transparent;
+            }
+            
+            /* Minimal borders for print */
+            th {
+                border-bottom: 0px solid #999;
+            }
+            
+            .colspan-all {
+                border-top: 1px solid #999;
+            }
+            
+            /* Ensure no colored backgrounds in print */
+            th, .colspan-2, .colspan-3 {
+                background-color: transparent !important;
+                -webkit-print-color-adjust: economy;
+                color-adjust: economy;
+            }
+        }
+        
+        @media screen {
+            /* Screen-only styles */
+            .page {
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                padding: 0.5in;
+                margin: 20px auto;
+                background: white;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="report-header">
+            <h1>Эхокардиография</h1>
+            <p class="description">Протокол исследования</p>
+               <div class="patient-info">
+      Name: { patient.name } | DOB: { patient.dob } | ID: { patient.id }
+    </div>
+        </div>
+
+            <div class="print-header">
+ 
+    <h2>Основные параметры</h2>
+    <table>
+
+                {% if echo.AM_WEIGHT!='' and echo.hide_AM_WEIGHT!="1" %}
+                <tr>
+                    <td>Вес, кг</td>
+                    <td>{{ echo.ref_AM_WEIGHT }}</td>
+                    <td>{{ echo.AM_WEIGHT }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+
+                {% if echo.AM_HEIGHT!='' and echo.hide_AM_HEIGHT!="1" %}
+                <tr>
+                    <td>Рост, м</td>
+                    <td>{{ echo.ref_AM_HEIGHT }}</td>
+                    <td>{{ echo.AM_HEIGHT }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+
+                {% if echo.AM_GENDER!='' and echo.hide_AM_GENDER!="1" %}
+                <tr>
+                    <td>Пол</td>
+                    <td colspan="3">{{  '_' if 'u'== echo.AM_GENDER else '' }}
+{{  'женский' if 'f'== echo.AM_GENDER else '' }}
+{{  'мужской' if 'm'== echo.AM_GENDER else '' }}</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.PA_NAME!='' and echo.hide_PA_NAME!="1" %}
+                <tr>
+                    <td>Имя</td>
+                    <td colspan="3">{{ echo.PA_NAME }}</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.PA_SURNAME!='' and echo.hide_PA_SURNAME!="1" %}
+                <tr>
+                    <td>Фамилия</td>
+                    <td colspan="3">{{ echo.PA_SURNAME }}</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.AM_BSA!='' and echo.hide_AM_BSA!="1" %}
+                <tr>
+                    <td>Площадь поверхности тела, м2</td>
+                    <td>{{ echo.ref_AM_BSA }}</td>
+                    <td>{{ echo.AM_BSA }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+</table>
+
+    <h2>Левый желудочек</h2>
+    <table>
+
+        </table>
+        <div class="two-columns">
+            <div class="column-left">
+                <table>
+
+                {% if echo.LV_IVSd!='' and echo.hide_LV_IVSd!="1" %}
+                <tr>
+                    <td>Межжелудочковая перегородка, мм</td>
+                    <td>{{ echo.ref_LV_IVSd }}</td>
+                    <td>{{ echo.LV_IVSd }}</td>
+                    <td class="no-break-cell">&lt; 11</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_IDs!='' and echo.hide_LV_IDs!="1" %}
+                <tr>
+                    <td>Конечно-систолический размер, мм</td>
+                    <td>{{ echo.ref_LV_IDs }}</td>
+                    <td>{{ echo.LV_IDs }}</td>
+                    <td class="no-break-cell">&lt; 11</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_IDd!='' and echo.hide_LV_IDd!="1" %}
+                <tr>
+                    <td>Конечно-диастолический размер, мм</td>
+                    <td>{{ echo.ref_LV_IDd }}</td>
+                    <td>{{ echo.LV_IDd }}</td>
+                    <td class="no-break-cell">30—50</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_PWd!='' and echo.hide_LV_PWd!="1" %}
+                <tr>
+                    <td>Задняя стенка, мм</td>
+                    <td>{{ echo.ref_LV_PWd }}</td>
+                    <td>{{ echo.LV_PWd }}</td>
+                    <td class="no-break-cell">&lt; 11</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_IDs!='' and echo.hide_LV_IDs!="1" %}
+                <tr>
+                    <td>Конечно-систолический размер, мм</td>
+                    <td>{{ echo.ref_LV_IDs }}</td>
+                    <td>{{ echo.LV_IDs }}</td>
+                    <td class="no-break-cell">20—30</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_LVOTD!='' and echo.hide_LV_LVOTD!="1" %}
+                <tr>
+                    <td>Диаметр выносящего тракта, мм</td>
+                    <td>{{ echo.ref_LV_LVOTD }}</td>
+                    <td>{{ echo.LV_LVOTD }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EDV_Simpson!='' and echo.hide_LV_EDV_Simpson!="1" %}
+                <tr>
+                    <td>Конечно-диастолический объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_EDV_Simpson }}</td>
+                    <td>{{ echo.LV_EDV_Simpson }}</td>
+                    <td class="no-break-cell">70—80</td>
+                </tr>
+                {% endif %}
+
+            </table>
+        </div>
+        <div class="column-right">
+
+                {% if echo.LV_description!='' and echo.hide_LV_description!="1" %}
+                <div class="description">
+                    <span id='LV_description'>{{ echo.LV_description | safe }}</span>
+                </div>
+                {% endif %}
+
+        {% for key, parameter in echo.items() if key.startswith('LV_') and (not key.endswith('_text')) and key not in ['LV_EDV_Simpson', 'LV_EF_Simpson', 'LV_PWd', 'LV_EDV_Simpson_f', 'LV_Mass_AL_I', 'LV_EDV_Simpson_m', 'LV_ESV_Simpson_m', 'LV_EF_Simpson2', 'LV_ESV_Simpson', 'LV_EF_SV', 'LV_ESV_Simpson1', 'LV_IDs', 'LV_ESV_Simpson2', 'LV_', 'LV_text_group1_start', 'LV_text_2', 'LV_EF_Simpson1', 'LV_Mass_AL', 'LV_IDd', 'LV_Mass_Devereux_I', 'LV_EF_SV1', 'LV_description', 'LV_IVSd', 'LV_EF_SV_m', 'LV_LVOTD', 'LV_EF_Simpson_f', 'LV_EF_Simpson_m', 'LV_EF_SV_f', 'LV_ESV_Simpson_f', 'LV_Mass_Devereux', 'LV_text_3', 'LV_EF_SV2', 'LV_text_1', 'LV_text', 'LV_text_4', 'LV_text_group1_end'] %}
+                <tr>
+                    <td>{{ key }}{{ parameter.name | translate }}</td>
+                    <td>{{ parameter }}{{ parameter.value | translate }}</td>
+                    <td>{{ parameter.units | translate }}</td>
+                    <td></td>
+                </tr>
+        {% endfor %}
+        
+</div></div>
+
+    <h2>Правый желудочек</h2>
+    <table>
+
+                {% if echo.LV_ESV_Simpson!='' and echo.hide_LV_ESV_Simpson!="1" %}
+                <tr>
+                    <td>Конечно-систолический объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_ESV_Simpson }}</td>
+                    <td>{{ echo.LV_ESV_Simpson }}</td>
+                    <td class="no-break-cell">55—66</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EF_Simpson!='' and echo.hide_LV_EF_Simpson!="1" %}
+                <tr>
+                    <td>Фракция выброса (по Симпсону), %</td>
+                    <td>{{ echo.ref_LV_EF_Simpson }}</td>
+                    <td>{{ echo.LV_EF_Simpson }}</td>
+                    <td class="no-break-cell">24—56</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EF_SV!='' and echo.hide_LV_EF_SV!="1" %}
+                <tr>
+                    <td>Ударный объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_EF_SV }}</td>
+                    <td>{{ echo.LV_EF_SV }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+</div></div>
+
+    <h2>Еще один табулятор</h2>
+    <table>
+
+                {% if echo.LV_EDV_Simpson_f!='' and echo.hide_LV_EDV_Simpson_f!="1" %}
+                <tr>
+                    <td>Конечно-диастолический объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_EDV_Simpson_f }}</td>
+                    <td>{{ echo.LV_EDV_Simpson_f }}</td>
+                    <td class="no-break-cell">ж 70—80</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_ESV_Simpson_f!='' and echo.hide_LV_ESV_Simpson_f!="1" %}
+                <tr>
+                    <td>Конечно-систолический объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_ESV_Simpson_f }}</td>
+                    <td>{{ echo.LV_ESV_Simpson_f }}</td>
+                    <td class="no-break-cell">ж 55—66</td>
+                </tr>
+                {% endif %}
+</div></div>
+
+    <h2>И еще один табулятор</h2>
+    <table>
+
+                {% if echo.LV_EF_Simpson_f!='' and echo.hide_LV_EF_Simpson_f!="1" %}
+                <tr>
+                    <td>Фракция выброса (по Симпсону), %</td>
+                    <td>{{ echo.ref_LV_EF_Simpson_f }}</td>
+                    <td>{{ echo.LV_EF_Simpson_f }}</td>
+                    <td class="no-break-cell">ж 24—56</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EF_SV_f!='' and echo.hide_LV_EF_SV_f!="1" %}
+                <tr>
+                    <td>Ударный объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_EF_SV_f }}</td>
+                    <td>{{ echo.LV_EF_SV_f }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EDV_Simpson_m!='' and echo.hide_LV_EDV_Simpson_m!="1" %}
+                <tr>
+                    <td>Конечно-диастолический объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_EDV_Simpson_m }}</td>
+                    <td>{{ echo.LV_EDV_Simpson_m }}</td>
+                    <td class="no-break-cell">м 70—80</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_ESV_Simpson_m!='' and echo.hide_LV_ESV_Simpson_m!="1" %}
+                <tr>
+                    <td>Конечно-систолический объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_ESV_Simpson_m }}</td>
+                    <td>{{ echo.LV_ESV_Simpson_m }}</td>
+                    <td class="no-break-cell">м 55—66</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EF_Simpson_m!='' and echo.hide_LV_EF_Simpson_m!="1" %}
+                <tr>
+                    <td>Фракция выброса (по Симпсону), %</td>
+                    <td>{{ echo.ref_LV_EF_Simpson_m }}</td>
+                    <td>{{ echo.LV_EF_Simpson_m }}</td>
+                    <td class="no-break-cell">м 24—56</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_text!='' and echo.hide_LV_text!="1" %}
+                <div class="description">
+                    <span id='LV_text'>{{ echo.LV_text | safe }}</span>
+                </div>
+                {% endif %}
+
+                {% if echo.LV_EF_SV_m!='' and echo.hide_LV_EF_SV_m!="1" %}
+                <tr>
+                    <td>Ударный объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_EF_SV_m }}</td>
+                    <td>{{ echo.LV_EF_SV_m }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_Mass_AL!='' and echo.hide_LV_Mass_AL!="1" %}
+                <tr>
+                    <td>Масса (площадь—длина), г</td>
+                    <td>{{ echo.ref_LV_Mass_AL }}</td>
+                    <td>{{ echo.LV_Mass_AL }}</td>
+                    <td class="no-break-cell">123</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_Mass_AL_I!='' and echo.hide_LV_Mass_AL_I!="1" %}
+                <tr>
+                    <td>Индекс массы (площадь—длина), г/м2</td>
+                    <td>{{ echo.ref_LV_Mass_AL_I }}</td>
+                    <td>{{ echo.LV_Mass_AL_I }}</td>
+                    <td class="no-break-cell">123</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_Mass_Devereux!='' and echo.hide_LV_Mass_Devereux!="1" %}
+                <tr>
+                    <td>Масса (Devereux), г</td>
+                    <td>{{ echo.ref_LV_Mass_Devereux }}</td>
+                    <td>{{ echo.LV_Mass_Devereux }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_Mass_Devereux_I!='' and echo.hide_LV_Mass_Devereux_I!="1" %}
+                <tr>
+                    <td>Индекс массы (Devereux), г/м2</td>
+                    <td>{{ echo.ref_LV_Mass_Devereux_I }}</td>
+                    <td>{{ echo.LV_Mass_Devereux_I }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+</div></div>
+
+    <h2>Правый желудочек</h2>
+    <table>
+
+                {% if echo.LV_ESV_Simpson1!='' and echo.hide_LV_ESV_Simpson1!="1" %}
+                <tr>
+                    <td>Конечно-систолический объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_ESV_Simpson1 }}</td>
+                    <td>{{ echo.LV_ESV_Simpson1 }}</td>
+                    <td class="no-break-cell">55—66</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EF_Simpson1!='' and echo.hide_LV_EF_Simpson1!="1" %}
+                <tr>
+                    <td>Фракция выброса (по Симпсону), %</td>
+                    <td>{{ echo.ref_LV_EF_Simpson1 }}</td>
+                    <td>{{ echo.LV_EF_Simpson1 }}</td>
+                    <td class="no-break-cell">24—56</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EF_SV1!='' and echo.hide_LV_EF_SV1!="1" %}
+                <tr>
+                    <td>Ударный объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_EF_SV1 }}</td>
+                    <td>{{ echo.LV_EF_SV1 }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+</div></div>
+
+    <h2>Правый желудочек</h2>
+    <table>
+
+                {% if echo.LV_ESV_Simpson2!='' and echo.hide_LV_ESV_Simpson2!="1" %}
+                <tr>
+                    <td>Конечно-систолический объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_ESV_Simpson2 }}</td>
+                    <td>{{ echo.LV_ESV_Simpson2 }}</td>
+                    <td class="no-break-cell">55—66</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EF_Simpson2!='' and echo.hide_LV_EF_Simpson2!="1" %}
+                <tr>
+                    <td>Фракция выброса (по Симпсону), %</td>
+                    <td>{{ echo.ref_LV_EF_Simpson2 }}</td>
+                    <td>{{ echo.LV_EF_Simpson2 }}</td>
+                    <td class="no-break-cell">24—56</td>
+                </tr>
+                {% endif %}
+
+                {% if echo.LV_EF_SV2!='' and echo.hide_LV_EF_SV2!="1" %}
+                <tr>
+                    <td>Ударный объем (по Симпсону), мл</td>
+                    <td>{{ echo.ref_LV_EF_SV2 }}</td>
+                    <td>{{ echo.LV_EF_SV2 }}</td>
+                    <td class="no-break-cell"></td>
+                </tr>
+                {% endif %}
+
+        {% for key, parameter in echo.items() if (not key.endswith('_text')) and not (key.startswith('LV_') or key.startswith('hide_') or key.startswith('ref_')) 
+        and key not in ['AM_BSA', 'AM_GENDER', 'AM_WEIGHT', 'PA_SURNAME', 'AM_HEIGHT', 'PA_NAME'] %}
+                <tr>
+                    <td>1 {{ key }}{{ parameter.name | translate }}</td>
+                    <td>2{{ parameter.value | translate }}</td>
+                    <td>3{{ parameter.units | translate }}</td>
+                    <td>4</td>
+                </tr>
+        {% endfor %}
+        
+</div></div>
+            </div>
+<script>
+
+</script>
+</body>
+</html>

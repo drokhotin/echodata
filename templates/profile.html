@@ -1,0 +1,43 @@
+{% extends "basic.html" %}
+{% set active_page = "profile" %}
+
+{% block title %}Эходата 3.0: user's profile {% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+<script language="JavaScript" type="text/JavaScript">
+function validateForm() {
+    var x = document.forms["entrance"]["email"].value;
+    var atpos = x.indexOf("@");
+    var dotpos = x.lastIndexOf(".");
+    if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+        alert("Неправильный адрес электронной почты.");
+        return false;
+    }
+}
+</script>
+
+<h1>Эходата 3.0</h1>
+
+<form name='entrance' onsubmit="return validateForm();" method="post">
+
+<p>Имя (можно указать только имя или имя и отчество): </p><p><input type='text' name='name' value="{{ doc.name }}"></p>
+<p>Фамилия: </p><p><input type='text' name='surname' value="{{ doc.surname }}"></p>
+<p>Специальность: </p><p><input type='text' name='specialty' value="{{ doc.specialty }}"></p>
+<p>Подпись (как она будет выглядеть в консультациях): </p><textarea rows="4" cols="50" name='signature'>{{ doc.signature }}</textarea>
+<p>Отделение: </p><p><input type='text' name='ward' value="{{ doc.ward }}"></p>
+<p>Телефон: </p><p><input type='text' name='phone' value="{{ doc.phone }}"></p>
+<p>E-mail (основной идентификатор): </p><p><input type='text' id='email' name='email' value="{{ doc.email }}"></p>
+<p>Пароль: </p><p><input type='password' id='password' name='password'></p>
+<p>Повторите пароль: </p><p><input type='password' id='password1' name='password1'></p>
+<p>Кодовое слово (можно узнать у администратора клиники): </p><p><input type='text' name='code'></p>
+<p>
+<input type='submit' value='Отправить'></th></tr></table></form>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: создать новый шаблон{% endblock %}
+{% block head %}
+{% endblock %}
+
+{% block body_attrs %}{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/scripts/nicEdit.js"></script>
+{% endblock %}
+
+{% block style %}
+<style>
+    .nicEdit-main {
+        overflow: auto !important;
+        height: 5.5em;
+        width: 300px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<h2>Конфигурация</h2>
+Конфигурация используется при печати заключений.
+
+
+<form method="post">
+
+    <p>Название учреждения:
+    <p><input type=text name=hospital value="{{ config.hospital }}" style="width:50%" id=hospital>
+    <p>Отделение:
+    <p><input type=text name=ward value="{{ config.ward }}" style="width:50%" id=ward>
+    <p>Шапка:
+    <p><textarea name=head style="height:50%;width:50%" id=head>{{ config.head|safe }}</textarea>
+
+    <p>Подвал:
+    <p><textarea name=footer style="height:50%;width:50%" id=footer>{{ config.footer|safe }}</textarea>
+
+    <p><input type=checkbox name=default value='true' {{ 'checked' if config.default }}> Использовать в качестве основного
+
+    <p><input type=submit value=Сохранить></p>
+
+</form>
+
+<script type="text/javascript">
+	bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
+</script>
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+
+
+</div></main>
+
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  </body>
+</html>

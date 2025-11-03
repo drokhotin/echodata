@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="static/dist/purify.min.js"></script>
+    <title></title>
+    
+   <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .description {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 80px 60px 120px;
+            gap: 12px;
+            align-items: center;
+        }
+        .form-row {
+            display: contents;
+        }
+        .form-label {
+            text-align: right;
+            padding: 12px 15px;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        .input-container {
+            position: relative;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+        .form-unit {
+            padding: 12px 5px;
+            color: #555;
+            text-align: center;
+        }
+        .form-reference {
+            padding: 12px 15px;
+            color: #7f8c8d;
+            font-style: italic;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        .form-header {
+            grid-column: 1 / -1;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .rte{margin-bottom:1.5rem}
+        .toolbar{margin-bottom:.5rem;display:flex;flex-wrap:wrap;gap:.25rem}
+        button,select{padding:.35rem .6rem;border:1px solid #ccc;border-radius:4px;background:#f9f9f9;cursor:pointer;font-size:.9rem}
+        button:hover,select:hover{background:#eee}
+        .editor{min-height:150px;
+             max-height: 300px;
+             overflow-y: auto; 
+             padding:.6rem;border:1px solid #ccc;border-radius:6px;line-height:1.5}
+        .editor:empty:before{content:attr(data-placeholder);color:#888}
+        .editor img{max-width:100%;height:auto;display:block;margin:.5rem 0}
+        .editor ul, .editor ol {
+             margin: .5em 0;
+             padding-left: 1em;
+             list-style-position: inside;
+             }
+
+               
+        /* Text input that spans multiple columns */
+        .text-input-full {
+            grid-column: 2 / span 3;
+        }
+        .text-input-full .form-input {
+            text-align: left;
+        }
+
+        /* Textarea input that spans multiple columns */
+        .text-area-full {
+            grid-column: 1 / span 4;
+        }
+        .text-area-full .form-input {
+            text-align: left;
+        }
+        .text-area-sentence {
+            grid-column: 1 / span 4;
+            padding: 12px 5px;
+            background-color: #f8f9fa;
+        }
+        textarea.form-input {
+		    text-align: left;
+			font-size: 16px;
+			height: 200px;
+		}
+
+        
+ 
+        .buttons {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-submit {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+        }
+        .btn-reset {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+        }
+        .btn-clean {
+            background: green;
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .form-label, .input-container, .form-unit, .form-reference {
+                grid-column: 1;
+            }
+            .form-label {
+                text-align: left;
+                margin-top: 15px;
+                background: none;
+                padding: 5px 10px;
+            }
+            .form-reference {
+                margin-bottom: 15px;
+                background: none;
+                padding: 5px 10px;
+            }
+            .form-header {
+                margin-top: 30px;
+            }
+        }
+        .tabs { display: flex; margin-bottom: 10px; flex-wrap: wrap; }
+        .tab-button { 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            background: #f0f0f0; 
+            border: 1px solid #ccc; 
+            margin-right: 5px; 
+        }
+        .tab-button.active { background: #fff; border-bottom: 1px solid #fff; }
+        .tab-content { display: none; padding: 15px; border: 1px solid #ccc; }
+        .tab-content.active { display: block; }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Эхокардиография</h1>
+            <p class="description">Протокол исследования</p>
+        </header>
+
+            <div class="form-header">Общий заголовок</div>
+            <form method="post" id="myForm">
+
+ 
+    <div class="tabs">
+    
+            <div class="tab-button active" onclick="openTab('tab1')">Основные параметры</div>
+
+            <div class="tab-button active" onclick="openTab('tab2')">Левый желудочек</div>
+
+            <div class="tab-button active" onclick="openTab('tab3')">Правый желудочек</div>
+
+            <div class="tab-button active" onclick="openTab('tab4')">Еще один табулятор</div>
+
+            <div class="tab-button active" onclick="openTab('tab5')">И еще один табулятор</div>
+
+            <div class="tab-button active" onclick="openTab('tab6')">Правый желудочек</div>
+
+            <div class="tab-button active" onclick="openTab('tab7')">Правый желудочек</div>
+    </div>
+    
+   		<div id="tab1" class="tab-content active">
+            <div class="form-grid">
+        
+
+        <div class="form-row" id='row_AM_WEIGHT'>
+            <input type='hidden' id='hide_AM_WEIGHT' name='hide_AM_WEIGHT'>        
+            <div class="form-label">Вес:</div>
+            <div class="input-container">
+            
+            <input type='number' step='0.1' name='AM_WEIGHT' id='AM_WEIGHT' value='{{ echo.AM_WEIGHT }}' class="form-input">
+            </div>
+            <div class="form-unit">кг</div>
+            <div class="form-reference">
+                <span id='ref_AM_WEIGHT'></span>
+                <input hidden name='ref_AM_WEIGHT' id='inp_AM_WEIGHT' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_AM_HEIGHT'>
+            <input type='hidden' id='hide_AM_HEIGHT' name='hide_AM_HEIGHT'>        
+            <div class="form-label">Рост:</div>
+            <div class="input-container">
+            
+            <input type='number' step='0.01' name='AM_HEIGHT' id='AM_HEIGHT' value='{{ echo.AM_HEIGHT }}' class="form-input">
+            </div>
+            <div class="form-unit">м</div>
+            <div class="form-reference">
+                <span id='ref_AM_HEIGHT'></span>
+                <input hidden name='ref_AM_HEIGHT' id='inp_AM_HEIGHT' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_AM_GENDER'>
+            <input type='hidden' id='hide_AM_GENDER' name='hide_AM_GENDER'>        
+            <div class="form-label">Пол:</div>
+            <div class="input-container text-input-full">
+            <select name='AM_GENDER' id='AM_GENDER' class="form-input">
+            <option value='u' {{  'selected' if 'u'== echo.AM_GENDER else '' }}>_</option>
+<option value='f' {{  'selected' if 'f'== echo.AM_GENDER else '' }}>женский</option>
+<option value='m' {{  'selected' if 'm'== echo.AM_GENDER else '' }}>мужской</option>
+            </select>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_PA_NAME'>
+            <input type='hidden' id='hide_PA_NAME' name='hide_PA_NAME'>        
+            <div class="form-label">Имя:</div>
+            <div class="input-container text-input-full">
+            
+            <input type='text' name='PA_NAME' id='PA_NAME' value='{{ echo.PA_NAME }}' class="form-input">
+            </div>
+
+        </div>
+
+        <div class="form-row" id='row_PA_SURNAME'>
+            <input type='hidden' id='hide_PA_SURNAME' name='hide_PA_SURNAME'>        
+            <div class="form-label">Фамилия:</div>
+            <div class="input-container text-input-full">
+            
+            <input type='text' name='PA_SURNAME' id='PA_SURNAME' value='{{ echo.PA_SURNAME }}' class="form-input">
+            </div>
+
+        </div>
+
+        <div class="form-row" id='row_AM_BSA'>
+            <input type='hidden' id='hide_AM_BSA' name='hide_AM_BSA'>        
+            <div class="form-label">Площадь поверхности тела:</div>
+            <div class="input-container">
+            
+            <input type='number' step='0.01' name='AM_BSA' id='AM_BSA' value='{{ echo.AM_BSA }}' class="form-input">
+            </div>
+            <div class="form-unit">м2</div>
+            <div class="form-reference">
+                <span id='ref_AM_BSA'></span>
+                <input hidden name='ref_AM_BSA' id='inp_AM_BSA' value=''>
+            </div>
+        </div>
+
+   		    </div>
+        </div>
+        
+
+   		<div id="tab2" class="tab-content">
+            <div class="form-grid">
+        
+
+        <div class="form-row" id='row_LV_IVSd'>
+            <input type='hidden' id='hide_LV_IVSd' name='hide_LV_IVSd'>        
+            <div class="form-label">Межжелудочковая перегородка:</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_IVSd' id='LV_IVSd' value='{{ echo.LV_IVSd }}' class="form-input">
+            </div>
+            <div class="form-unit">мм</div>
+            <div class="form-reference">&lt; 11
+                <span id='ref_LV_IVSd'></span>
+                <input hidden name='ref_LV_IVSd' id='inp_LV_IVSd' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_IDs'>
+            <input type='hidden' id='hide_LV_IDs' name='hide_LV_IDs'>        
+            <div class="form-label">Конечно-систолический размер:</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_IDs' id='LV_IDs' value='{{ echo.LV_IDs }}' class="form-input">
+            </div>
+            <div class="form-unit">мм</div>
+            <div class="form-reference">&lt; 11
+                <span id='ref_LV_IDs'></span>
+                <input hidden name='ref_LV_IDs' id='inp_LV_IDs' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_IDd'>
+            <input type='hidden' id='hide_LV_IDd' name='hide_LV_IDd'>        
+            <div class="form-label">Конечно-диастолический размер:</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_IDd' id='LV_IDd' value='{{ echo.LV_IDd }}' class="form-input">
+            </div>
+            <div class="form-unit">мм</div>
+            <div class="form-reference">30—50
+                <span id='ref_LV_IDd'></span>
+                <input hidden name='ref_LV_IDd' id='inp_LV_IDd' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_PWd'>
+            <input type='hidden' id='hide_LV_PWd' name='hide_LV_PWd'>        
+            <div class="form-label">Задняя стенка:</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_PWd' id='LV_PWd' value='{{ echo.LV_PWd }}' class="form-input">
+            </div>
+            <div class="form-unit">мм</div>
+            <div class="form-reference">&lt; 11
+                <span id='ref_LV_PWd'></span>
+                <input hidden name='ref_LV_PWd' id='inp_LV_PWd' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_IDs'>
+            <input type='hidden' id='hide_LV_IDs' name='hide_LV_IDs'>        
+            <div class="form-label">Конечно-систолический размер:</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_IDs' id='LV_IDs' value='{{ echo.LV_IDs }}' class="form-input">
+            </div>
+            <div class="form-unit">мм</div>
+            <div class="form-reference">20—30
+                <span id='ref_LV_IDs'></span>
+                <input hidden name='ref_LV_IDs' id='inp_LV_IDs' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_LVOTD'>
+            <input type='hidden' id='hide_LV_LVOTD' name='hide_LV_LVOTD'>        
+            <div class="form-label">Диаметр выносящего тракта:</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_LVOTD' id='LV_LVOTD' value='{{ echo.LV_LVOTD }}' class="form-input">
+            </div>
+            <div class="form-unit">мм</div>
+            <div class="form-reference">
+                <span id='ref_LV_LVOTD'></span>
+                <input hidden name='ref_LV_LVOTD' id='inp_LV_LVOTD' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EDV_Simpson'>
+            <input type='hidden' id='hide_LV_EDV_Simpson' name='hide_LV_EDV_Simpson'>        
+            <div class="form-label">Конечно-диастолический объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EDV_Simpson' id='LV_EDV_Simpson' value='{{ echo.LV_EDV_Simpson }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">70—80
+                <span id='ref_LV_EDV_Simpson'></span>
+                <input hidden name='ref_LV_EDV_Simpson' id='inp_LV_EDV_Simpson' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_description'>
+            <input type='hidden' id='hide_LV_description' name='hide_LV_description'>
+            <div class="form-label">Описание левого желудочка</div>
+			<div class="input-container text-area-full">
+            <div class="rte" data-name="LV_description">{{ echo.LV_description | safe }}</div>
+            </div>
+
+        </div>
+
+        {% for key, parameter in echo.items() if key.startswith('LV_') and key not in ['LV_ESV_Simpson1', 'LV_EF_SV1', 'LV_text_4', 'LV_text_group1_end', 'LV_text_group1_start', 'LV_EF_SV_m', 'LV_EDV_Simpson_f', 'LV_', 'LV_text_2', 'LV_Mass_AL_I', 'LV_ESV_Simpson2', 'LV_EDV_Simpson_m', 'LV_EDV_Simpson', 'LV_text', 'LV_EF_SV_f', 'LV_text_1', 'LV_IVSd', 'LV_Mass_Devereux', 'LV_PWd', 'LV_EF_Simpson', 'LV_ESV_Simpson_m', 'LV_EF_Simpson_f', 'LV_EF_SV2', 'LV_description', 'LV_Mass_Devereux_I', 'LV_text_3', 'LV_ESV_Simpson', 'LV_IDs', 'LV_EF_SV', 'LV_Mass_AL', 'LV_EF_Simpson2', 'LV_ESV_Simpson_f', 'LV_IDd', 'LV_LVOTD', 'LV_EF_Simpson_m', 'LV_EF_Simpson1'] %}
+        <div class="form-row" id='row_{{key }}'>
+            <div class="form-label">{{ parameter.name | translate }}:</div>
+            <div class="input-container">
+            
+            <input type='number' name='{{ key }}' id='{{ key }}' value='{{ parameter.value }}' class="form-input">
+            
+            </div>
+            <div class="form-unit">{{ parameter.units | translate }}</div>
+            <div class="form-reference"> </div>
+        </div>
+        {% endfor %}
+        
+
+   		    </div>
+        </div>
+        
+
+   		<div id="tab3" class="tab-content">
+            <div class="form-grid">
+        
+
+        <div class="form-row" id='row_LV_ESV_Simpson'>
+            <input type='hidden' id='hide_LV_ESV_Simpson' name='hide_LV_ESV_Simpson'>        
+            <div class="form-label">Конечно-систолический объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_ESV_Simpson' id='LV_ESV_Simpson' value='{{ echo.LV_ESV_Simpson }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">55—66
+                <span id='ref_LV_ESV_Simpson'></span>
+                <input hidden name='ref_LV_ESV_Simpson' id='inp_LV_ESV_Simpson' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EF_Simpson'>
+            <input type='hidden' id='hide_LV_EF_Simpson' name='hide_LV_EF_Simpson'>        
+            <div class="form-label">Фракция выброса (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_Simpson' id='LV_EF_Simpson' value='{{ echo.LV_EF_Simpson }}' class="form-input">
+            </div>
+            <div class="form-unit">%</div>
+            <div class="form-reference">24—56
+                <span id='ref_LV_EF_Simpson'></span>
+                <input hidden name='ref_LV_EF_Simpson' id='inp_LV_EF_Simpson' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EF_SV'>
+            <input type='hidden' id='hide_LV_EF_SV' name='hide_LV_EF_SV'>        
+            <div class="form-label">Ударный объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_SV' id='LV_EF_SV' value='{{ echo.LV_EF_SV }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">
+                <span id='ref_LV_EF_SV'></span>
+                <input hidden name='ref_LV_EF_SV' id='inp_LV_EF_SV' value=''>
+            </div>
+        </div>
+
+   		    </div>
+        </div>
+        
+
+   		<div id="tab4" class="tab-content">
+            <div class="form-grid">
+        
+
+        <div class="form-row" id='row_LV_EDV_Simpson_f'>
+            <input type='hidden' id='hide_LV_EDV_Simpson_f' name='hide_LV_EDV_Simpson_f'>        
+            <div class="form-label">Конечно-диастолический объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EDV_Simpson_f' id='LV_EDV_Simpson_f' value='{{ echo.LV_EDV_Simpson_f }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">ж 70—80
+                <span id='ref_LV_EDV_Simpson_f'></span>
+                <input hidden name='ref_LV_EDV_Simpson_f' id='inp_LV_EDV_Simpson_f' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_ESV_Simpson_f'>
+            <input type='hidden' id='hide_LV_ESV_Simpson_f' name='hide_LV_ESV_Simpson_f'>        
+            <div class="form-label">Конечно-систолический объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_ESV_Simpson_f' id='LV_ESV_Simpson_f' value='{{ echo.LV_ESV_Simpson_f }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">ж 55—66
+                <span id='ref_LV_ESV_Simpson_f'></span>
+                <input hidden name='ref_LV_ESV_Simpson_f' id='inp_LV_ESV_Simpson_f' value=''>
+            </div>
+        </div>
+
+   		    </div>
+        </div>
+        
+
+   		<div id="tab5" class="tab-content">
+            <div class="form-grid">
+        
+
+        <div class="form-row" id='row_LV_EF_Simpson_f'>
+            <input type='hidden' id='hide_LV_EF_Simpson_f' name='hide_LV_EF_Simpson_f'>        
+            <div class="form-label">Фракция выброса (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_Simpson_f' id='LV_EF_Simpson_f' value='{{ echo.LV_EF_Simpson_f }}' class="form-input">
+            </div>
+            <div class="form-unit">%</div>
+            <div class="form-reference">ж 24—56
+                <span id='ref_LV_EF_Simpson_f'></span>
+                <input hidden name='ref_LV_EF_Simpson_f' id='inp_LV_EF_Simpson_f' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EF_SV_f'>
+            <input type='hidden' id='hide_LV_EF_SV_f' name='hide_LV_EF_SV_f'>        
+            <div class="form-label">Ударный объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_SV_f' id='LV_EF_SV_f' value='{{ echo.LV_EF_SV_f }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">
+                <span id='ref_LV_EF_SV_f'></span>
+                <input hidden name='ref_LV_EF_SV_f' id='inp_LV_EF_SV_f' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EDV_Simpson_m'>
+            <input type='hidden' id='hide_LV_EDV_Simpson_m' name='hide_LV_EDV_Simpson_m'>        
+            <div class="form-label">Конечно-диастолический объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EDV_Simpson_m' id='LV_EDV_Simpson_m' value='{{ echo.LV_EDV_Simpson_m }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">м 70—80
+                <span id='ref_LV_EDV_Simpson_m'></span>
+                <input hidden name='ref_LV_EDV_Simpson_m' id='inp_LV_EDV_Simpson_m' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_ESV_Simpson_m'>
+            <input type='hidden' id='hide_LV_ESV_Simpson_m' name='hide_LV_ESV_Simpson_m'>        
+            <div class="form-label">Конечно-систолический объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_ESV_Simpson_m' id='LV_ESV_Simpson_m' value='{{ echo.LV_ESV_Simpson_m }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">м 55—66
+                <span id='ref_LV_ESV_Simpson_m'></span>
+                <input hidden name='ref_LV_ESV_Simpson_m' id='inp_LV_ESV_Simpson_m' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EF_Simpson_m'>
+            <input type='hidden' id='hide_LV_EF_Simpson_m' name='hide_LV_EF_Simpson_m'>        
+            <div class="form-label">Фракция выброса (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_Simpson_m' id='LV_EF_Simpson_m' value='{{ echo.LV_EF_Simpson_m }}' class="form-input">
+            </div>
+            <div class="form-unit">%</div>
+            <div class="form-reference">м 24—56
+                <span id='ref_LV_EF_Simpson_m'></span>
+                <input hidden name='ref_LV_EF_Simpson_m' id='inp_LV_EF_Simpson_m' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_text'>
+            <input type='hidden' id='hide_LV_text' name='hide_LV_text'>
+            <div class="form-label">Описание (левый желудочек)</div>
+			<div class="input-container text-area-full">
+            <div class="rte" data-name="LV_text">{{ echo.LV_text | safe }}</div>
+            </div>
+
+        </div>
+
+        <div class="form-row" id='row_LV_text_1'>
+            <input type='hidden' id='hide_LV_text_1' name='hide_LV_text_1'>        
+            <div class="text-area-sentence" onclick="appendRTE('LV_text', 'LV_text_1')">
+            <label id='LV_text_1'>Левый желудочек значительно расширен.</label>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="text-area-sentence" style = "color: blue; font-weight: bold;" onclick="showhide('sentence-group-1')">
+            <label><span id="sentence-group-1-sign">&#9205;</span> Дилатация ЛЖ</label>
+            </div>
+        </div>
+         <span id="sentence-group-1" style="border-left-style: solid;border-left-color:blue;padding-left:1em;display:none;">
+        
+
+        <div class="form-row" id='row_LV_text_2'>
+            <input type='hidden' id='hide_LV_text_2' name='hide_LV_text_2'>        
+            <div class="text-area-sentence" onclick="appendRTE('LV_text', 'LV_text_2')">
+            <label id='LV_text_2'>Левый желудочек умеренно расширен.</label>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_text_3'>
+            <input type='hidden' id='hide_LV_text_3' name='hide_LV_text_3'>        
+            <div class="text-area-sentence" onclick="appendRTE('LV_text', 'LV_text_3')">
+            <label id='LV_text_3'>Левый желудочек значительно расширен.</label>
+            </div>
+        </div>
+
+   		    </span>
+        
+
+        <div class="form-row" id='row_LV_text_4'>
+            <input type='hidden' id='hide_LV_text_4' name='hide_LV_text_4'>        
+            <div class="text-area-sentence" onclick="appendRTE('LV_text', 'LV_text_4')">
+            <label id='LV_text_4'>Левый желудочек значительно расширен.</label>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EF_SV_m'>
+            <input type='hidden' id='hide_LV_EF_SV_m' name='hide_LV_EF_SV_m'>        
+            <div class="form-label">Ударный объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_SV_m' id='LV_EF_SV_m' value='{{ echo.LV_EF_SV_m }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">
+                <span id='ref_LV_EF_SV_m'></span>
+                <input hidden name='ref_LV_EF_SV_m' id='inp_LV_EF_SV_m' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_Mass_AL'>
+            <input type='hidden' id='hide_LV_Mass_AL' name='hide_LV_Mass_AL'>        
+            <div class="form-label">Масса (площадь—длина):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_Mass_AL' id='LV_Mass_AL' value='{{ echo.LV_Mass_AL }}' class="form-input">
+            </div>
+            <div class="form-unit">г</div>
+            <div class="form-reference">123
+                <span id='ref_LV_Mass_AL'></span>
+                <input hidden name='ref_LV_Mass_AL' id='inp_LV_Mass_AL' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_Mass_AL_I'>
+            <input type='hidden' id='hide_LV_Mass_AL_I' name='hide_LV_Mass_AL_I'>        
+            <div class="form-label">Индекс массы (площадь—длина):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_Mass_AL_I' id='LV_Mass_AL_I' value='{{ echo.LV_Mass_AL_I }}' class="form-input">
+            </div>
+            <div class="form-unit">г/м2</div>
+            <div class="form-reference">123
+                <span id='ref_LV_Mass_AL_I'></span>
+                <input hidden name='ref_LV_Mass_AL_I' id='inp_LV_Mass_AL_I' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_Mass_Devereux'>
+            <input type='hidden' id='hide_LV_Mass_Devereux' name='hide_LV_Mass_Devereux'>        
+            <div class="form-label">Масса (Devereux):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_Mass_Devereux' id='LV_Mass_Devereux' value='{{ echo.LV_Mass_Devereux }}' class="form-input">
+            </div>
+            <div class="form-unit">г</div>
+            <div class="form-reference">
+                <span id='ref_LV_Mass_Devereux'></span>
+                <input hidden name='ref_LV_Mass_Devereux' id='inp_LV_Mass_Devereux' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_Mass_Devereux_I'>
+            <input type='hidden' id='hide_LV_Mass_Devereux_I' name='hide_LV_Mass_Devereux_I'>        
+            <div class="form-label">Индекс массы (Devereux):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_Mass_Devereux_I' id='LV_Mass_Devereux_I' value='{{ echo.LV_Mass_Devereux_I }}' class="form-input">
+            </div>
+            <div class="form-unit">г/м2</div>
+            <div class="form-reference">
+                <span id='ref_LV_Mass_Devereux_I'></span>
+                <input hidden name='ref_LV_Mass_Devereux_I' id='inp_LV_Mass_Devereux_I' value=''>
+            </div>
+        </div>
+
+   		    </div>
+        </div>
+        
+
+   		<div id="tab6" class="tab-content">
+            <div class="form-grid">
+        
+
+        <div class="form-row" id='row_LV_ESV_Simpson1'>
+            <input type='hidden' id='hide_LV_ESV_Simpson1' name='hide_LV_ESV_Simpson1'>        
+            <div class="form-label">Конечно-систолический объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_ESV_Simpson1' id='LV_ESV_Simpson1' value='{{ echo.LV_ESV_Simpson1 }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">55—66
+                <span id='ref_LV_ESV_Simpson1'></span>
+                <input hidden name='ref_LV_ESV_Simpson1' id='inp_LV_ESV_Simpson1' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EF_Simpson1'>
+            <input type='hidden' id='hide_LV_EF_Simpson1' name='hide_LV_EF_Simpson1'>        
+            <div class="form-label">Фракция выброса (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_Simpson1' id='LV_EF_Simpson1' value='{{ echo.LV_EF_Simpson1 }}' class="form-input">
+            </div>
+            <div class="form-unit">%</div>
+            <div class="form-reference">24—56
+                <span id='ref_LV_EF_Simpson1'></span>
+                <input hidden name='ref_LV_EF_Simpson1' id='inp_LV_EF_Simpson1' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EF_SV1'>
+            <input type='hidden' id='hide_LV_EF_SV1' name='hide_LV_EF_SV1'>        
+            <div class="form-label">Ударный объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_SV1' id='LV_EF_SV1' value='{{ echo.LV_EF_SV1 }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">
+                <span id='ref_LV_EF_SV1'></span>
+                <input hidden name='ref_LV_EF_SV1' id='inp_LV_EF_SV1' value=''>
+            </div>
+        </div>
+
+   		    </div>
+        </div>
+        
+
+   		<div id="tab7" class="tab-content">
+            <div class="form-grid">
+        
+
+        <div class="form-row" id='row_LV_ESV_Simpson2'>
+            <input type='hidden' id='hide_LV_ESV_Simpson2' name='hide_LV_ESV_Simpson2'>        
+            <div class="form-label">Конечно-систолический объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_ESV_Simpson2' id='LV_ESV_Simpson2' value='{{ echo.LV_ESV_Simpson2 }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">55—66
+                <span id='ref_LV_ESV_Simpson2'></span>
+                <input hidden name='ref_LV_ESV_Simpson2' id='inp_LV_ESV_Simpson2' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EF_Simpson2'>
+            <input type='hidden' id='hide_LV_EF_Simpson2' name='hide_LV_EF_Simpson2'>        
+            <div class="form-label">Фракция выброса (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_Simpson2' id='LV_EF_Simpson2' value='{{ echo.LV_EF_Simpson2 }}' class="form-input">
+            </div>
+            <div class="form-unit">%</div>
+            <div class="form-reference">24—56
+                <span id='ref_LV_EF_Simpson2'></span>
+                <input hidden name='ref_LV_EF_Simpson2' id='inp_LV_EF_Simpson2' value=''>
+            </div>
+        </div>
+
+        <div class="form-row" id='row_LV_EF_SV2'>
+            <input type='hidden' id='hide_LV_EF_SV2' name='hide_LV_EF_SV2'>        
+            <div class="form-label">Ударный объем (по Симпсону):</div>
+            <div class="input-container">
+            
+            <input type='number' step='1.0' name='LV_EF_SV2' id='LV_EF_SV2' value='{{ echo.LV_EF_SV2 }}' class="form-input">
+            </div>
+            <div class="form-unit">мл</div>
+            <div class="form-reference">
+                <span id='ref_LV_EF_SV2'></span>
+                <input hidden name='ref_LV_EF_SV2' id='inp_LV_EF_SV2' value=''>
+            </div>
+        </div>
+
+        {% for key, parameter in echo.items() if not (key.startswith('LV_')) 
+        and key not in ['AM_GENDER', 'AM_HEIGHT', 'PA_NAME', 'AM_WEIGHT', 'PA_SURNAME', 'AM_BSA'] %}
+        <div class="form-row" id='row_{{ key }}'>
+            <div class="form-label">{{ parameter.name | translate }}:</div>
+            <div class="input-container">
+            
+            <input  type='number' name='{{ key }}' id='{{ key }}' value='{{ parameter.value }}' class="form-input">
+            
+            </div>
+            <div class="form-unit">{{ parameter.units | translate }}</div>
+            <div class="form-reference"> </div>
+        </div>
+        {% endfor %}
+        
+
+   		    </div>
+        </div>
+        
+    
+            <div class="buttons">
+                <button type="submit" class="btn btn-submit">Сохранить данные</button>
+                <button type="reset" class="btn btn-reset">Очистить форму</button>
+            </div>
+            </form>
+        </div>
+    </div>
+<script>
+const el_LV_ESV_Simpson1 = document.getElementById('LV_ESV_Simpson1');
+const el_LV_EF_SV1 = document.getElementById('LV_EF_SV1');
+const el_AM_GENDER = document.getElementById('AM_GENDER');
+const el_AM_HEIGHT = document.getElementById('AM_HEIGHT');
+const el_LV_EF_SV_m = document.getElementById('LV_EF_SV_m');
+const el_LV_EDV_Simpson_f = document.getElementById('LV_EDV_Simpson_f');
+const el_LV_Mass_AL_I = document.getElementById('LV_Mass_AL_I');
+const el_LV_ESV_Simpson2 = document.getElementById('LV_ESV_Simpson2');
+const el_LV_EDV_Simpson_m = document.getElementById('LV_EDV_Simpson_m');
+const el_LV_EDV_Simpson = document.getElementById('LV_EDV_Simpson');
+const el_LV_EF_SV_f = document.getElementById('LV_EF_SV_f');
+const el_LV_IVSd = document.getElementById('LV_IVSd');
+const el_LV_Mass_Devereux = document.getElementById('LV_Mass_Devereux');
+const el_LV_PWd = document.getElementById('LV_PWd');
+const el_LV_EF_Simpson = document.getElementById('LV_EF_Simpson');
+const el_LV_ESV_Simpson_m = document.getElementById('LV_ESV_Simpson_m');
+const el_LV_EF_Simpson_f = document.getElementById('LV_EF_Simpson_f');
+const el_LV_EF_SV2 = document.getElementById('LV_EF_SV2');
+const el_AM_WEIGHT = document.getElementById('AM_WEIGHT');
+const el_LV_Mass_Devereux_I = document.getElementById('LV_Mass_Devereux_I');
+const el_LV_ESV_Simpson = document.getElementById('LV_ESV_Simpson');
+const el_LV_EF_SV = document.getElementById('LV_EF_SV');
+const el_LV_EF_Simpson2 = document.getElementById('LV_EF_Simpson2');
+const el_LV_Mass_AL = document.getElementById('LV_Mass_AL');
+const el_LV_IDs = document.getElementById('LV_IDs');
+const el_LV_ESV_Simpson_f = document.getElementById('LV_ESV_Simpson_f');
+const el_LV_IDd = document.getElementById('LV_IDd');
+const el_LV_LVOTD = document.getElementById('LV_LVOTD');
+const el_LV_EF_Simpson_m = document.getElementById('LV_EF_Simpson_m');
+const el_AM_BSA = document.getElementById('AM_BSA');
+const el_LV_EF_Simpson1 = document.getElementById('LV_EF_Simpson1');
+
+function toNum(v=NaN) {
+     const n = Number(v);
+     return Number.isFinite(n) ? n : NaN;
+     }
+   
+function calc_AM_BSA({AM_HEIGHT, AM_WEIGHT}){
+return ((0.007184 * Math.pow(((AM_HEIGHT * 100)), 0.725)) * Math.pow((AM_WEIGHT), 0.425))};
+
+function calc_LV_EDV_Simpson({LV_EDV_Simpson_f}){
+return LV_EDV_Simpson_f};
+
+function calc_LV_ESV_Simpson({LV_ESV_Simpson_f}){
+return LV_ESV_Simpson_f};
+
+function calc_LV_EF_Simpson({LV_ESV_Simpson, LV_EDV_Simpson}){
+return ((100 * ((LV_EDV_Simpson - LV_ESV_Simpson))) / LV_EDV_Simpson)};
+
+function calc_LV_EF_SV({LV_ESV_Simpson, LV_EDV_Simpson}){
+return (LV_EDV_Simpson - LV_ESV_Simpson)};
+
+function calc_LV_EDV_Simpson_f({LV_EDV_Simpson_m}){
+return LV_EDV_Simpson_m};
+
+function calc_LV_ESV_Simpson_f({LV_ESV_Simpson_m}){
+return LV_ESV_Simpson_m};
+
+function calc_LV_EF_Simpson_f({LV_EF_Simpson}){
+return LV_EF_Simpson};
+
+function calc_LV_EF_SV_f({LV_EF_SV}){
+return LV_EF_SV};
+
+function calc_LV_EDV_Simpson_m({LV_EDV_Simpson}){
+return LV_EDV_Simpson};
+
+function calc_LV_ESV_Simpson_m({LV_ESV_Simpson}){
+return LV_ESV_Simpson};
+
+function calc_LV_EF_Simpson_m({LV_EF_Simpson}){
+return LV_EF_Simpson};
+
+function calc_LV_EF_SV_m({LV_EF_SV}){
+return LV_EF_SV};
+
+function calc_LV_Mass_AL_I({AM_BSA, LV_Mass_AL}){
+return (LV_Mass_AL / AM_BSA)};
+
+function calc_LV_Mass_Devereux({LV_IVSd, LV_IDd, LV_PWd}){
+return ((1.04 * ((Math.pow((((LV_IDd + LV_IVSd) + LV_PWd)), 3) - Math.pow(LV_IDd, 3)))) + 0.6)};
+
+function calc_LV_Mass_Devereux_I({AM_BSA, LV_Mass_Devereux}){
+return (LV_Mass_Devereux / AM_BSA)};
+
+function calc_LV_ESV_Simpson1({LV_ESV_Simpson_f}){
+return LV_ESV_Simpson_f};
+
+function calc_LV_EF_Simpson1({LV_ESV_Simpson, LV_EDV_Simpson}){
+return ((100 * ((LV_EDV_Simpson - LV_ESV_Simpson))) / LV_EDV_Simpson)};
+
+function calc_LV_EF_SV1({LV_ESV_Simpson, LV_EDV_Simpson}){
+return (LV_EDV_Simpson - LV_ESV_Simpson)};
+
+function calc_LV_ESV_Simpson2({LV_ESV_Simpson_f}){
+return LV_ESV_Simpson_f};
+
+function calc_LV_EF_Simpson2({LV_ESV_Simpson, LV_EDV_Simpson}){
+return ((100 * ((LV_EDV_Simpson - LV_ESV_Simpson))) / LV_EDV_Simpson)};
+
+function calc_LV_EF_SV2({LV_ESV_Simpson, LV_EDV_Simpson}){
+return (LV_EDV_Simpson - LV_ESV_Simpson)};
+
+
+function roundToStep(value, step) {
+  if (!Number.isFinite(value) || !Number.isFinite(step) || step <= 0) return NaN;
+  // Determine how many decimal places step has
+  const stepStr = step.toString();
+  const decimals = (stepStr.split('.')[1] || '').length;
+  const factor = Math.pow(10, decimals);
+  // Scale both to integers if possible
+  const scaled = Math.round((value / step) * factor);
+  const result = (scaled / factor) * step;
+  // Normalize tiny FP errors (e.g., 1.2000000000000002)
+  return Number(result.toFixed(decimals));
+}
+
+function update_AM_BSA(i=1) {
+if (i>5) return 0;
+if (el_AM_HEIGHT.value == '') return -1;
+const arg_AM_HEIGHT = toNum(el_AM_HEIGHT.value);
+if (el_AM_WEIGHT.value == '') return -1;
+const arg_AM_WEIGHT = toNum(el_AM_WEIGHT.value);
+let step = parseFloat(el_AM_BSA.step);
+if (isNaN(step)) step=1;
+const result_AM_BSA = calc_AM_BSA({AM_HEIGHT: arg_AM_HEIGHT, AM_WEIGHT: arg_AM_WEIGHT});
+if (Number.isFinite(result_AM_BSA)) { el_AM_BSA.value = roundToStep(result_AM_BSA, step);
+update_LV_Mass_AL_I(i+1);
+update_LV_Mass_Devereux_I(i+1);
+}
+}
+
+
+function update_LV_EDV_Simpson(i=1) {
+if (i>5) return 0;
+if (el_LV_EDV_Simpson_f.value == '') return -1;
+const arg_LV_EDV_Simpson_f = toNum(el_LV_EDV_Simpson_f.value);
+let step = parseFloat(el_LV_EDV_Simpson.step);
+if (isNaN(step)) step=1;
+const result_LV_EDV_Simpson = calc_LV_EDV_Simpson({LV_EDV_Simpson_f: arg_LV_EDV_Simpson_f});
+if (Number.isFinite(result_LV_EDV_Simpson)) { el_LV_EDV_Simpson.value = roundToStep(result_LV_EDV_Simpson, step);
+update_LV_EF_Simpson(i+1);
+update_LV_EF_SV(i+1);
+update_LV_EDV_Simpson_m(i+1);
+update_LV_EF_Simpson1(i+1);
+update_LV_EF_SV1(i+1);
+update_LV_EF_Simpson2(i+1);
+update_LV_EF_SV2(i+1);
+}
+}
+
+
+function update_LV_ESV_Simpson(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson_f.value == '') return -1;
+const arg_LV_ESV_Simpson_f = toNum(el_LV_ESV_Simpson_f.value);
+let step = parseFloat(el_LV_ESV_Simpson.step);
+if (isNaN(step)) step=1;
+const result_LV_ESV_Simpson = calc_LV_ESV_Simpson({LV_ESV_Simpson_f: arg_LV_ESV_Simpson_f});
+if (Number.isFinite(result_LV_ESV_Simpson)) { el_LV_ESV_Simpson.value = roundToStep(result_LV_ESV_Simpson, step);
+update_LV_EF_Simpson(i+1);
+update_LV_EF_SV(i+1);
+update_LV_ESV_Simpson_m(i+1);
+update_LV_EF_Simpson1(i+1);
+update_LV_EF_SV1(i+1);
+update_LV_EF_Simpson2(i+1);
+update_LV_EF_SV2(i+1);
+}
+}
+
+
+function update_LV_EF_Simpson(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson.value == '') return -1;
+const arg_LV_ESV_Simpson = toNum(el_LV_ESV_Simpson.value);
+if (el_LV_EDV_Simpson.value == '') return -1;
+const arg_LV_EDV_Simpson = toNum(el_LV_EDV_Simpson.value);
+let step = parseFloat(el_LV_EF_Simpson.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_Simpson = calc_LV_EF_Simpson({LV_ESV_Simpson: arg_LV_ESV_Simpson, LV_EDV_Simpson: arg_LV_EDV_Simpson});
+if (Number.isFinite(result_LV_EF_Simpson)) { el_LV_EF_Simpson.value = roundToStep(result_LV_EF_Simpson, step);
+update_LV_EF_Simpson_f(i+1);
+update_LV_EF_Simpson_m(i+1);
+}
+}
+
+
+function update_LV_EF_SV(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson.value == '') return -1;
+const arg_LV_ESV_Simpson = toNum(el_LV_ESV_Simpson.value);
+if (el_LV_EDV_Simpson.value == '') return -1;
+const arg_LV_EDV_Simpson = toNum(el_LV_EDV_Simpson.value);
+let step = parseFloat(el_LV_EF_SV.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_SV = calc_LV_EF_SV({LV_ESV_Simpson: arg_LV_ESV_Simpson, LV_EDV_Simpson: arg_LV_EDV_Simpson});
+if (Number.isFinite(result_LV_EF_SV)) { el_LV_EF_SV.value = roundToStep(result_LV_EF_SV, step);
+update_LV_EF_SV_f(i+1);
+update_LV_EF_SV_m(i+1);
+}
+}
+
+
+function update_LV_EDV_Simpson_f(i=1) {
+if (i>5) return 0;
+if (el_LV_EDV_Simpson_m.value == '') return -1;
+const arg_LV_EDV_Simpson_m = toNum(el_LV_EDV_Simpson_m.value);
+let step = parseFloat(el_LV_EDV_Simpson_f.step);
+if (isNaN(step)) step=1;
+const result_LV_EDV_Simpson_f = calc_LV_EDV_Simpson_f({LV_EDV_Simpson_m: arg_LV_EDV_Simpson_m});
+if (Number.isFinite(result_LV_EDV_Simpson_f)) { el_LV_EDV_Simpson_f.value = roundToStep(result_LV_EDV_Simpson_f, step);
+update_LV_EDV_Simpson(i+1);
+}
+}
+
+
+function update_LV_ESV_Simpson_f(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson_m.value == '') return -1;
+const arg_LV_ESV_Simpson_m = toNum(el_LV_ESV_Simpson_m.value);
+let step = parseFloat(el_LV_ESV_Simpson_f.step);
+if (isNaN(step)) step=1;
+const result_LV_ESV_Simpson_f = calc_LV_ESV_Simpson_f({LV_ESV_Simpson_m: arg_LV_ESV_Simpson_m});
+if (Number.isFinite(result_LV_ESV_Simpson_f)) { el_LV_ESV_Simpson_f.value = roundToStep(result_LV_ESV_Simpson_f, step);
+update_LV_ESV_Simpson(i+1);
+update_LV_ESV_Simpson1(i+1);
+update_LV_ESV_Simpson2(i+1);
+}
+}
+
+
+function update_LV_EF_Simpson_f(i=1) {
+if (i>5) return 0;
+if (el_LV_EF_Simpson.value == '') return -1;
+const arg_LV_EF_Simpson = toNum(el_LV_EF_Simpson.value);
+let step = parseFloat(el_LV_EF_Simpson_f.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_Simpson_f = calc_LV_EF_Simpson_f({LV_EF_Simpson: arg_LV_EF_Simpson});
+if (Number.isFinite(result_LV_EF_Simpson_f)) { el_LV_EF_Simpson_f.value = roundToStep(result_LV_EF_Simpson_f, step);
+}
+}
+
+
+function update_LV_EF_SV_f(i=1) {
+if (i>5) return 0;
+if (el_LV_EF_SV.value == '') return -1;
+const arg_LV_EF_SV = toNum(el_LV_EF_SV.value);
+let step = parseFloat(el_LV_EF_SV_f.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_SV_f = calc_LV_EF_SV_f({LV_EF_SV: arg_LV_EF_SV});
+if (Number.isFinite(result_LV_EF_SV_f)) { el_LV_EF_SV_f.value = roundToStep(result_LV_EF_SV_f, step);
+}
+}
+
+
+function update_LV_EDV_Simpson_m(i=1) {
+if (i>5) return 0;
+if (el_LV_EDV_Simpson.value == '') return -1;
+const arg_LV_EDV_Simpson = toNum(el_LV_EDV_Simpson.value);
+let step = parseFloat(el_LV_EDV_Simpson_m.step);
+if (isNaN(step)) step=1;
+const result_LV_EDV_Simpson_m = calc_LV_EDV_Simpson_m({LV_EDV_Simpson: arg_LV_EDV_Simpson});
+if (Number.isFinite(result_LV_EDV_Simpson_m)) { el_LV_EDV_Simpson_m.value = roundToStep(result_LV_EDV_Simpson_m, step);
+update_LV_EDV_Simpson_f(i+1);
+}
+}
+
+
+function update_LV_ESV_Simpson_m(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson.value == '') return -1;
+const arg_LV_ESV_Simpson = toNum(el_LV_ESV_Simpson.value);
+let step = parseFloat(el_LV_ESV_Simpson_m.step);
+if (isNaN(step)) step=1;
+const result_LV_ESV_Simpson_m = calc_LV_ESV_Simpson_m({LV_ESV_Simpson: arg_LV_ESV_Simpson});
+if (Number.isFinite(result_LV_ESV_Simpson_m)) { el_LV_ESV_Simpson_m.value = roundToStep(result_LV_ESV_Simpson_m, step);
+update_LV_ESV_Simpson_f(i+1);
+}
+}
+
+
+function update_LV_EF_Simpson_m(i=1) {
+if (i>5) return 0;
+if (el_LV_EF_Simpson.value == '') return -1;
+const arg_LV_EF_Simpson = toNum(el_LV_EF_Simpson.value);
+let step = parseFloat(el_LV_EF_Simpson_m.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_Simpson_m = calc_LV_EF_Simpson_m({LV_EF_Simpson: arg_LV_EF_Simpson});
+if (Number.isFinite(result_LV_EF_Simpson_m)) { el_LV_EF_Simpson_m.value = roundToStep(result_LV_EF_Simpson_m, step);
+}
+}
+
+
+function update_LV_EF_SV_m(i=1) {
+if (i>5) return 0;
+if (el_LV_EF_SV.value == '') return -1;
+const arg_LV_EF_SV = toNum(el_LV_EF_SV.value);
+let step = parseFloat(el_LV_EF_SV_m.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_SV_m = calc_LV_EF_SV_m({LV_EF_SV: arg_LV_EF_SV});
+if (Number.isFinite(result_LV_EF_SV_m)) { el_LV_EF_SV_m.value = roundToStep(result_LV_EF_SV_m, step);
+}
+}
+
+
+function update_LV_Mass_AL_I(i=1) {
+if (i>5) return 0;
+if (el_AM_BSA.value == '') return -1;
+const arg_AM_BSA = toNum(el_AM_BSA.value);
+if (el_LV_Mass_AL.value == '') return -1;
+const arg_LV_Mass_AL = toNum(el_LV_Mass_AL.value);
+let step = parseFloat(el_LV_Mass_AL_I.step);
+if (isNaN(step)) step=1;
+const result_LV_Mass_AL_I = calc_LV_Mass_AL_I({AM_BSA: arg_AM_BSA, LV_Mass_AL: arg_LV_Mass_AL});
+if (Number.isFinite(result_LV_Mass_AL_I)) { el_LV_Mass_AL_I.value = roundToStep(result_LV_Mass_AL_I, step);
+}
+}
+
+
+function update_LV_Mass_Devereux(i=1) {
+if (i>5) return 0;
+if (el_LV_IVSd.value == '') return -1;
+const arg_LV_IVSd = toNum(el_LV_IVSd.value);
+if (el_LV_IDd.value == '') return -1;
+const arg_LV_IDd = toNum(el_LV_IDd.value);
+if (el_LV_PWd.value == '') return -1;
+const arg_LV_PWd = toNum(el_LV_PWd.value);
+let step = parseFloat(el_LV_Mass_Devereux.step);
+if (isNaN(step)) step=1;
+const result_LV_Mass_Devereux = calc_LV_Mass_Devereux({LV_IVSd: arg_LV_IVSd, LV_IDd: arg_LV_IDd, LV_PWd: arg_LV_PWd});
+if (Number.isFinite(result_LV_Mass_Devereux)) { el_LV_Mass_Devereux.value = roundToStep(result_LV_Mass_Devereux, step);
+update_LV_Mass_Devereux_I(i+1);
+}
+}
+
+
+function update_LV_Mass_Devereux_I(i=1) {
+if (i>5) return 0;
+if (el_AM_BSA.value == '') return -1;
+const arg_AM_BSA = toNum(el_AM_BSA.value);
+if (el_LV_Mass_Devereux.value == '') return -1;
+const arg_LV_Mass_Devereux = toNum(el_LV_Mass_Devereux.value);
+let step = parseFloat(el_LV_Mass_Devereux_I.step);
+if (isNaN(step)) step=1;
+const result_LV_Mass_Devereux_I = calc_LV_Mass_Devereux_I({AM_BSA: arg_AM_BSA, LV_Mass_Devereux: arg_LV_Mass_Devereux});
+if (Number.isFinite(result_LV_Mass_Devereux_I)) { el_LV_Mass_Devereux_I.value = roundToStep(result_LV_Mass_Devereux_I, step);
+}
+}
+
+
+function update_LV_ESV_Simpson1(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson_f.value == '') return -1;
+const arg_LV_ESV_Simpson_f = toNum(el_LV_ESV_Simpson_f.value);
+let step = parseFloat(el_LV_ESV_Simpson1.step);
+if (isNaN(step)) step=1;
+const result_LV_ESV_Simpson1 = calc_LV_ESV_Simpson1({LV_ESV_Simpson_f: arg_LV_ESV_Simpson_f});
+if (Number.isFinite(result_LV_ESV_Simpson1)) { el_LV_ESV_Simpson1.value = roundToStep(result_LV_ESV_Simpson1, step);
+}
+}
+
+
+function update_LV_EF_Simpson1(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson.value == '') return -1;
+const arg_LV_ESV_Simpson = toNum(el_LV_ESV_Simpson.value);
+if (el_LV_EDV_Simpson.value == '') return -1;
+const arg_LV_EDV_Simpson = toNum(el_LV_EDV_Simpson.value);
+let step = parseFloat(el_LV_EF_Simpson1.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_Simpson1 = calc_LV_EF_Simpson1({LV_ESV_Simpson: arg_LV_ESV_Simpson, LV_EDV_Simpson: arg_LV_EDV_Simpson});
+if (Number.isFinite(result_LV_EF_Simpson1)) { el_LV_EF_Simpson1.value = roundToStep(result_LV_EF_Simpson1, step);
+}
+}
+
+
+function update_LV_EF_SV1(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson.value == '') return -1;
+const arg_LV_ESV_Simpson = toNum(el_LV_ESV_Simpson.value);
+if (el_LV_EDV_Simpson.value == '') return -1;
+const arg_LV_EDV_Simpson = toNum(el_LV_EDV_Simpson.value);
+let step = parseFloat(el_LV_EF_SV1.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_SV1 = calc_LV_EF_SV1({LV_ESV_Simpson: arg_LV_ESV_Simpson, LV_EDV_Simpson: arg_LV_EDV_Simpson});
+if (Number.isFinite(result_LV_EF_SV1)) { el_LV_EF_SV1.value = roundToStep(result_LV_EF_SV1, step);
+}
+}
+
+
+function update_LV_ESV_Simpson2(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson_f.value == '') return -1;
+const arg_LV_ESV_Simpson_f = toNum(el_LV_ESV_Simpson_f.value);
+let step = parseFloat(el_LV_ESV_Simpson2.step);
+if (isNaN(step)) step=1;
+const result_LV_ESV_Simpson2 = calc_LV_ESV_Simpson2({LV_ESV_Simpson_f: arg_LV_ESV_Simpson_f});
+if (Number.isFinite(result_LV_ESV_Simpson2)) { el_LV_ESV_Simpson2.value = roundToStep(result_LV_ESV_Simpson2, step);
+}
+}
+
+
+function update_LV_EF_Simpson2(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson.value == '') return -1;
+const arg_LV_ESV_Simpson = toNum(el_LV_ESV_Simpson.value);
+if (el_LV_EDV_Simpson.value == '') return -1;
+const arg_LV_EDV_Simpson = toNum(el_LV_EDV_Simpson.value);
+let step = parseFloat(el_LV_EF_Simpson2.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_Simpson2 = calc_LV_EF_Simpson2({LV_ESV_Simpson: arg_LV_ESV_Simpson, LV_EDV_Simpson: arg_LV_EDV_Simpson});
+if (Number.isFinite(result_LV_EF_Simpson2)) { el_LV_EF_Simpson2.value = roundToStep(result_LV_EF_Simpson2, step);
+}
+}
+
+
+function update_LV_EF_SV2(i=1) {
+if (i>5) return 0;
+if (el_LV_ESV_Simpson.value == '') return -1;
+const arg_LV_ESV_Simpson = toNum(el_LV_ESV_Simpson.value);
+if (el_LV_EDV_Simpson.value == '') return -1;
+const arg_LV_EDV_Simpson = toNum(el_LV_EDV_Simpson.value);
+let step = parseFloat(el_LV_EF_SV2.step);
+if (isNaN(step)) step=1;
+const result_LV_EF_SV2 = calc_LV_EF_SV2({LV_ESV_Simpson: arg_LV_ESV_Simpson, LV_EDV_Simpson: arg_LV_EDV_Simpson});
+if (Number.isFinite(result_LV_EF_SV2)) { el_LV_EF_SV2.value = roundToStep(result_LV_EF_SV2, step);
+}
+}
+
+
+    function onInput_LV_ESV_Simpson1() {
+                    
+      document.getElementById('ref_LV_ESV_Simpson1').innerHTML = '';
+      if (el_LV_ESV_Simpson1.value != '') {
+        const value = toNum(el_LV_ESV_Simpson1.value);
+        let ref='';
+
+        if (value > 66.0) ref='+';
+
+        if (value < 55.0) ref='-';
+
+        document.getElementById('ref_LV_ESV_Simpson1').innerHTML = ref;
+        document.getElementById('inp_LV_ESV_Simpson1').value = ref;
+        }
+}
+
+
+    function onInput_LV_EF_SV1() {
+}
+
+
+    function onInput_AM_GENDER() {
+const AM_GENDER = el_AM_GENDER.value;
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_EDV_Simpson').style.display = '';
+                  document.getElementById('hide_LV_EDV_Simpson').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EDV_Simpson').style.display = 'none';
+                document.getElementById('hide_LV_EDV_Simpson').value = '1';
+                }
+            
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_ESV_Simpson').style.display = '';
+                  document.getElementById('hide_LV_ESV_Simpson').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_ESV_Simpson').style.display = 'none';
+                document.getElementById('hide_LV_ESV_Simpson').value = '1';
+                }
+            
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_EF_Simpson').style.display = '';
+                  document.getElementById('hide_LV_EF_Simpson').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_Simpson').style.display = 'none';
+                document.getElementById('hide_LV_EF_Simpson').value = '1';
+                }
+            
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_EF_SV').style.display = '';
+                  document.getElementById('hide_LV_EF_SV').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_SV').style.display = 'none';
+                document.getElementById('hide_LV_EF_SV').value = '1';
+                }
+            
+if ((AM_GENDER == 'f')) {
+                  document.getElementById('row_LV_EDV_Simpson_f').style.display = '';
+                  document.getElementById('hide_LV_EDV_Simpson_f').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EDV_Simpson_f').style.display = 'none';
+                document.getElementById('hide_LV_EDV_Simpson_f').value = '1';
+                }
+            
+if ((AM_GENDER == 'f')) {
+                  document.getElementById('row_LV_ESV_Simpson_f').style.display = '';
+                  document.getElementById('hide_LV_ESV_Simpson_f').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_ESV_Simpson_f').style.display = 'none';
+                document.getElementById('hide_LV_ESV_Simpson_f').value = '1';
+                }
+            
+if ((AM_GENDER == 'f')) {
+                  document.getElementById('row_LV_EF_Simpson_f').style.display = '';
+                  document.getElementById('hide_LV_EF_Simpson_f').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_Simpson_f').style.display = 'none';
+                document.getElementById('hide_LV_EF_Simpson_f').value = '1';
+                }
+            
+if ((AM_GENDER == 'f')) {
+                  document.getElementById('row_LV_EF_SV_f').style.display = '';
+                  document.getElementById('hide_LV_EF_SV_f').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_SV_f').style.display = 'none';
+                document.getElementById('hide_LV_EF_SV_f').value = '1';
+                }
+            
+if ((AM_GENDER == 'm')) {
+                  document.getElementById('row_LV_EDV_Simpson_m').style.display = '';
+                  document.getElementById('hide_LV_EDV_Simpson_m').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EDV_Simpson_m').style.display = 'none';
+                document.getElementById('hide_LV_EDV_Simpson_m').value = '1';
+                }
+            
+if ((AM_GENDER == 'm')) {
+                  document.getElementById('row_LV_ESV_Simpson_m').style.display = '';
+                  document.getElementById('hide_LV_ESV_Simpson_m').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_ESV_Simpson_m').style.display = 'none';
+                document.getElementById('hide_LV_ESV_Simpson_m').value = '1';
+                }
+            
+if ((AM_GENDER == 'm')) {
+                  document.getElementById('row_LV_EF_Simpson_m').style.display = '';
+                  document.getElementById('hide_LV_EF_Simpson_m').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_Simpson_m').style.display = 'none';
+                document.getElementById('hide_LV_EF_Simpson_m').value = '1';
+                }
+            
+if ((AM_GENDER == 'm')) {
+                  document.getElementById('row_LV_EF_SV_m').style.display = '';
+                  document.getElementById('hide_LV_EF_SV_m').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_SV_m').style.display = 'none';
+                document.getElementById('hide_LV_EF_SV_m').value = '1';
+                }
+            
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_ESV_Simpson1').style.display = '';
+                  document.getElementById('hide_LV_ESV_Simpson1').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_ESV_Simpson1').style.display = 'none';
+                document.getElementById('hide_LV_ESV_Simpson1').value = '1';
+                }
+            
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_EF_Simpson1').style.display = '';
+                  document.getElementById('hide_LV_EF_Simpson1').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_Simpson1').style.display = 'none';
+                document.getElementById('hide_LV_EF_Simpson1').value = '1';
+                }
+            
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_EF_SV1').style.display = '';
+                  document.getElementById('hide_LV_EF_SV1').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_SV1').style.display = 'none';
+                document.getElementById('hide_LV_EF_SV1').value = '1';
+                }
+            
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_ESV_Simpson2').style.display = '';
+                  document.getElementById('hide_LV_ESV_Simpson2').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_ESV_Simpson2').style.display = 'none';
+                document.getElementById('hide_LV_ESV_Simpson2').value = '1';
+                }
+            
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_EF_Simpson2').style.display = '';
+                  document.getElementById('hide_LV_EF_Simpson2').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_Simpson2').style.display = 'none';
+                document.getElementById('hide_LV_EF_Simpson2').value = '1';
+                }
+            
+if ((AM_GENDER == 'u')) {
+                  document.getElementById('row_LV_EF_SV2').style.display = '';
+                  document.getElementById('hide_LV_EF_SV2').value = '0';
+                  }
+            else {
+                document.getElementById('row_LV_EF_SV2').style.display = 'none';
+                document.getElementById('hide_LV_EF_SV2').value = '1';
+                }
+            
+}
+
+
+    function onInput_AM_HEIGHT() {
+update_AM_BSA();
+}
+
+
+    function onInput_LV_EF_SV_m() {
+}
+
+
+    function onInput_LV_EDV_Simpson_f() {
+                    
+      document.getElementById('ref_LV_EDV_Simpson_f').innerHTML = '';
+      if (el_LV_EDV_Simpson_f.value != '') {
+        const value = toNum(el_LV_EDV_Simpson_f.value);
+        let ref='';
+
+        if (value > 80.0) ref='+';
+
+        if (value < 70.0) ref='-';
+
+        document.getElementById('ref_LV_EDV_Simpson_f').innerHTML = ref;
+        document.getElementById('inp_LV_EDV_Simpson_f').value = ref;
+        }
+update_LV_EDV_Simpson();
+}
+
+
+    function onInput_LV_Mass_AL_I() {
+}
+
+
+    function onInput_LV_ESV_Simpson2() {
+                    
+      document.getElementById('ref_LV_ESV_Simpson2').innerHTML = '';
+      if (el_LV_ESV_Simpson2.value != '') {
+        const value = toNum(el_LV_ESV_Simpson2.value);
+        let ref='';
+
+        if (value > 66.0) ref='+';
+
+        if (value < 55.0) ref='-';
+
+        document.getElementById('ref_LV_ESV_Simpson2').innerHTML = ref;
+        document.getElementById('inp_LV_ESV_Simpson2').value = ref;
+        }
+}
+
+
+    function onInput_LV_EDV_Simpson_m() {
+                    
+      document.getElementById('ref_LV_EDV_Simpson_m').innerHTML = '';
+      if (el_LV_EDV_Simpson_m.value != '') {
+        const value = toNum(el_LV_EDV_Simpson_m.value);
+        let ref='';
+
+        if (value > 80.0) ref='+';
+
+        if (value < 70.0) ref='-';
+
+        document.getElementById('ref_LV_EDV_Simpson_m').innerHTML = ref;
+        document.getElementById('inp_LV_EDV_Simpson_m').value = ref;
+        }
+update_LV_EDV_Simpson_f();
+}
+
+
+    function onInput_LV_EDV_Simpson() {
+                    
+      document.getElementById('ref_LV_EDV_Simpson').innerHTML = '';
+      if (el_LV_EDV_Simpson.value != '') {
+        const value = toNum(el_LV_EDV_Simpson.value);
+        let ref='';
+
+        if (value > 80.0) ref='+';
+
+        if (value < 70.0) ref='-';
+
+        document.getElementById('ref_LV_EDV_Simpson').innerHTML = ref;
+        document.getElementById('inp_LV_EDV_Simpson').value = ref;
+        }
+update_LV_EF_Simpson();
+update_LV_EF_SV();
+update_LV_EDV_Simpson_m();
+update_LV_EF_Simpson1();
+update_LV_EF_SV1();
+update_LV_EF_Simpson2();
+update_LV_EF_SV2();
+}
+
+
+    function onInput_LV_EF_SV_f() {
+}
+
+
+    function onInput_LV_IVSd() {
+                    
+      document.getElementById('ref_LV_IVSd').innerHTML = '';
+      if (el_LV_IVSd.value != '') {
+        const value = toNum(el_LV_IVSd.value);
+        let ref='';
+
+        if (value > 11.0) ref='+';
+
+        if (value > 14.0) ref='++';
+
+        if (value > 16.0) ref='+++';
+
+        if (value > 18.0) ref='++++';
+
+        if (value < 0.0) ref='-';
+
+        document.getElementById('ref_LV_IVSd').innerHTML = ref;
+        document.getElementById('inp_LV_IVSd').value = ref;
+        }
+update_LV_Mass_Devereux();
+}
+
+
+    function onInput_LV_Mass_Devereux() {
+update_LV_Mass_Devereux_I();
+}
+
+
+    function onInput_LV_PWd() {
+                    
+      document.getElementById('ref_LV_PWd').innerHTML = '';
+      if (el_LV_PWd.value != '') {
+        const value = toNum(el_LV_PWd.value);
+        let ref='';
+
+        if (value > 11.0) ref='+';
+
+        if (value < 0.0) ref='-';
+
+        document.getElementById('ref_LV_PWd').innerHTML = ref;
+        document.getElementById('inp_LV_PWd').value = ref;
+        }
+update_LV_Mass_Devereux();
+}
+
+
+    function onInput_LV_EF_Simpson() {
+                    
+      document.getElementById('ref_LV_EF_Simpson').innerHTML = '';
+      if (el_LV_EF_Simpson.value != '') {
+        const value = toNum(el_LV_EF_Simpson.value);
+        let ref='';
+
+        if (value > 56.0) ref='+';
+
+        if (value < 24.0) ref='-';
+
+        document.getElementById('ref_LV_EF_Simpson').innerHTML = ref;
+        document.getElementById('inp_LV_EF_Simpson').value = ref;
+        }
+update_LV_EF_Simpson_f();
+update_LV_EF_Simpson_m();
+}
+
+
+    function onInput_LV_ESV_Simpson_m() {
+                    
+      document.getElementById('ref_LV_ESV_Simpson_m').innerHTML = '';
+      if (el_LV_ESV_Simpson_m.value != '') {
+        const value = toNum(el_LV_ESV_Simpson_m.value);
+        let ref='';
+
+        if (value > 66.0) ref='+';
+
+        if (value < 55.0) ref='-';
+
+        document.getElementById('ref_LV_ESV_Simpson_m').innerHTML = ref;
+        document.getElementById('inp_LV_ESV_Simpson_m').value = ref;
+        }
+update_LV_ESV_Simpson_f();
+}
+
+
+    function onInput_LV_EF_Simpson_f() {
+                    
+      document.getElementById('ref_LV_EF_Simpson_f').innerHTML = '';
+      if (el_LV_EF_Simpson_f.value != '') {
+        const value = toNum(el_LV_EF_Simpson_f.value);
+        let ref='';
+
+        if (value > 56.0) ref='+';
+
+        if (value < 24.0) ref='-';
+
+        document.getElementById('ref_LV_EF_Simpson_f').innerHTML = ref;
+        document.getElementById('inp_LV_EF_Simpson_f').value = ref;
+        }
+}
+
+
+    function onInput_LV_EF_SV2() {
+}
+
+
+    function onInput_AM_WEIGHT() {
+update_AM_BSA();
+}
+
+
+    function onInput_LV_Mass_Devereux_I() {
+}
+
+
+    function onInput_LV_ESV_Simpson() {
+                    
+      document.getElementById('ref_LV_ESV_Simpson').innerHTML = '';
+      if (el_LV_ESV_Simpson.value != '') {
+        const value = toNum(el_LV_ESV_Simpson.value);
+        let ref='';
+
+        if (value > 66.0) ref='+';
+
+        if (value < 55.0) ref='-';
+
+        document.getElementById('ref_LV_ESV_Simpson').innerHTML = ref;
+        document.getElementById('inp_LV_ESV_Simpson').value = ref;
+        }
+update_LV_EF_Simpson();
+update_LV_EF_SV();
+update_LV_ESV_Simpson_m();
+update_LV_EF_Simpson1();
+update_LV_EF_SV1();
+update_LV_EF_Simpson2();
+update_LV_EF_SV2();
+}
+
+
+    function onInput_LV_EF_SV() {
+update_LV_EF_SV_f();
+update_LV_EF_SV_m();
+}
+
+
+    function onInput_LV_EF_Simpson2() {
+                    
+      document.getElementById('ref_LV_EF_Simpson2').innerHTML = '';
+      if (el_LV_EF_Simpson2.value != '') {
+        const value = toNum(el_LV_EF_Simpson2.value);
+        let ref='';
+
+        if (value > 56.0) ref='+';
+
+        if (value < 24.0) ref='-';
+
+        document.getElementById('ref_LV_EF_Simpson2').innerHTML = ref;
+        document.getElementById('inp_LV_EF_Simpson2').value = ref;
+        }
+}
+
+
+    function onInput_LV_Mass_AL() {
+                    
+      document.getElementById('ref_LV_Mass_AL').innerHTML = '';
+      if (el_LV_Mass_AL.value != '') {
+        const value = toNum(el_LV_Mass_AL.value);
+        let ref='';
+
+        if (value > 30.0) ref='+';
+
+        if (value < 20.0) ref='-';
+
+        document.getElementById('ref_LV_Mass_AL').innerHTML = ref;
+        document.getElementById('inp_LV_Mass_AL').value = ref;
+        }
+update_LV_Mass_AL_I();
+}
+
+
+    function onInput_LV_IDs() {
+                    
+      document.getElementById('ref_LV_IDs').innerHTML = '';
+      if (el_LV_IDs.value != '') {
+        const value = toNum(el_LV_IDs.value);
+        let ref='';
+
+        if (value > 30.0) ref='+';
+
+        if (value < 20.0) ref='-';
+
+        document.getElementById('ref_LV_IDs').innerHTML = ref;
+        document.getElementById('inp_LV_IDs').value = ref;
+        }
+}
+
+
+    function onInput_LV_ESV_Simpson_f() {
+                    
+      document.getElementById('ref_LV_ESV_Simpson_f').innerHTML = '';
+      if (el_LV_ESV_Simpson_f.value != '') {
+        const value = toNum(el_LV_ESV_Simpson_f.value);
+        let ref='';
+
+        if (value > 66.0) ref='+';
+
+        if (value < 55.0) ref='-';
+
+        document.getElementById('ref_LV_ESV_Simpson_f').innerHTML = ref;
+        document.getElementById('inp_LV_ESV_Simpson_f').value = ref;
+        }
+update_LV_ESV_Simpson();
+update_LV_ESV_Simpson1();
+update_LV_ESV_Simpson2();
+}
+
+
+    function onInput_LV_IDd() {
+                    
+      document.getElementById('ref_LV_IDd').innerHTML = '';
+      if (el_LV_IDd.value != '') {
+        const value = toNum(el_LV_IDd.value);
+        let ref='';
+
+        if (value > 50.0) ref='+';
+
+        if (value > 60.0) ref='++';
+
+        if (value > 70.0) ref='+++';
+
+        if (value > 80.0) ref='++++';
+
+        if (value < 30.0) ref='-';
+
+        if (value < 20.0) ref='--';
+
+        if (value < 10.0) ref='---';
+
+        if (value < 5.0) ref='----';
+
+        document.getElementById('ref_LV_IDd').innerHTML = ref;
+        document.getElementById('inp_LV_IDd').value = ref;
+        }
+update_LV_Mass_Devereux();
+}
+
+
+    function onInput_LV_LVOTD() {
+                    
+      document.getElementById('ref_LV_LVOTD').innerHTML = '';
+      if (el_LV_LVOTD.value != '') {
+        const value = toNum(el_LV_LVOTD.value);
+        let ref='';
+
+        if (value > 100.0) ref='+';
+
+        if (value < 0.0) ref='-';
+
+        document.getElementById('ref_LV_LVOTD').innerHTML = ref;
+        document.getElementById('inp_LV_LVOTD').value = ref;
+        }
+}
+
+
+    function onInput_LV_EF_Simpson_m() {
+                    
+      document.getElementById('ref_LV_EF_Simpson_m').innerHTML = '';
+      if (el_LV_EF_Simpson_m.value != '') {
+        const value = toNum(el_LV_EF_Simpson_m.value);
+        let ref='';
+
+        if (value > 56.0) ref='+';
+
+        if (value < 24.0) ref='-';
+
+        document.getElementById('ref_LV_EF_Simpson_m').innerHTML = ref;
+        document.getElementById('inp_LV_EF_Simpson_m').value = ref;
+        }
+}
+
+
+    function onInput_AM_BSA() {
+update_LV_Mass_AL_I();
+update_LV_Mass_Devereux_I();
+}
+
+
+    function onInput_LV_EF_Simpson1() {
+                    
+      document.getElementById('ref_LV_EF_Simpson1').innerHTML = '';
+      if (el_LV_EF_Simpson1.value != '') {
+        const value = toNum(el_LV_EF_Simpson1.value);
+        let ref='';
+
+        if (value > 56.0) ref='+';
+
+        if (value < 24.0) ref='-';
+
+        document.getElementById('ref_LV_EF_Simpson1').innerHTML = ref;
+        document.getElementById('inp_LV_EF_Simpson1').value = ref;
+        }
+}
+
+
+    function logicUpdate(){
+const AM_GENDER = el_AM_GENDER.value;
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_EDV_Simpson').style.display = '';
+        else document.getElementById('row_LV_EDV_Simpson').style.display = 'none';
+        
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_ESV_Simpson').style.display = '';
+        else document.getElementById('row_LV_ESV_Simpson').style.display = 'none';
+        
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_EF_Simpson').style.display = '';
+        else document.getElementById('row_LV_EF_Simpson').style.display = 'none';
+        
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_EF_SV').style.display = '';
+        else document.getElementById('row_LV_EF_SV').style.display = 'none';
+        
+if ((AM_GENDER == 'f')) document.getElementById('row_LV_EDV_Simpson_f').style.display = '';
+        else document.getElementById('row_LV_EDV_Simpson_f').style.display = 'none';
+        
+if ((AM_GENDER == 'f')) document.getElementById('row_LV_ESV_Simpson_f').style.display = '';
+        else document.getElementById('row_LV_ESV_Simpson_f').style.display = 'none';
+        
+if ((AM_GENDER == 'f')) document.getElementById('row_LV_EF_Simpson_f').style.display = '';
+        else document.getElementById('row_LV_EF_Simpson_f').style.display = 'none';
+        
+if ((AM_GENDER == 'f')) document.getElementById('row_LV_EF_SV_f').style.display = '';
+        else document.getElementById('row_LV_EF_SV_f').style.display = 'none';
+        
+if ((AM_GENDER == 'm')) document.getElementById('row_LV_EDV_Simpson_m').style.display = '';
+        else document.getElementById('row_LV_EDV_Simpson_m').style.display = 'none';
+        
+if ((AM_GENDER == 'm')) document.getElementById('row_LV_ESV_Simpson_m').style.display = '';
+        else document.getElementById('row_LV_ESV_Simpson_m').style.display = 'none';
+        
+if ((AM_GENDER == 'm')) document.getElementById('row_LV_EF_Simpson_m').style.display = '';
+        else document.getElementById('row_LV_EF_Simpson_m').style.display = 'none';
+        
+if ((AM_GENDER == 'm')) document.getElementById('row_LV_EF_SV_m').style.display = '';
+        else document.getElementById('row_LV_EF_SV_m').style.display = 'none';
+        
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_ESV_Simpson1').style.display = '';
+        else document.getElementById('row_LV_ESV_Simpson1').style.display = 'none';
+        
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_EF_Simpson1').style.display = '';
+        else document.getElementById('row_LV_EF_Simpson1').style.display = 'none';
+        
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_EF_SV1').style.display = '';
+        else document.getElementById('row_LV_EF_SV1').style.display = 'none';
+        
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_ESV_Simpson2').style.display = '';
+        else document.getElementById('row_LV_ESV_Simpson2').style.display = 'none';
+        
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_EF_Simpson2').style.display = '';
+        else document.getElementById('row_LV_EF_Simpson2').style.display = 'none';
+        
+if ((AM_GENDER == 'u')) document.getElementById('row_LV_EF_SV2').style.display = '';
+        else document.getElementById('row_LV_EF_SV2').style.display = 'none';
+        
+}
+logicUpdate();
+
+
+        function openTab(tabId) {
+              // Hide all tab contents
+              document.querySelectorAll('.tab-content').forEach(tab => {
+                  tab.classList.remove('active');
+              });
+            
+              // Deactivate all tab buttons
+              document.querySelectorAll('.tab-button').forEach(button => {
+                  button.classList.remove('active');
+              });
+            
+              // Activate the selected tab and button
+              document.getElementById(tabId).classList.add('active');
+              event.currentTarget.classList.add('active');
+          }
+
+el_LV_ESV_Simpson1.addEventListener('input', onInput_LV_ESV_Simpson1);
+el_LV_EF_SV1.addEventListener('input', onInput_LV_EF_SV1);
+el_AM_GENDER.addEventListener('input', onInput_AM_GENDER);
+el_AM_HEIGHT.addEventListener('input', onInput_AM_HEIGHT);
+el_LV_EF_SV_m.addEventListener('input', onInput_LV_EF_SV_m);
+el_LV_EDV_Simpson_f.addEventListener('input', onInput_LV_EDV_Simpson_f);
+el_LV_Mass_AL_I.addEventListener('input', onInput_LV_Mass_AL_I);
+el_LV_ESV_Simpson2.addEventListener('input', onInput_LV_ESV_Simpson2);
+el_LV_EDV_Simpson_m.addEventListener('input', onInput_LV_EDV_Simpson_m);
+el_LV_EDV_Simpson.addEventListener('input', onInput_LV_EDV_Simpson);
+el_LV_EF_SV_f.addEventListener('input', onInput_LV_EF_SV_f);
+el_LV_IVSd.addEventListener('input', onInput_LV_IVSd);
+el_LV_Mass_Devereux.addEventListener('input', onInput_LV_Mass_Devereux);
+el_LV_PWd.addEventListener('input', onInput_LV_PWd);
+el_LV_EF_Simpson.addEventListener('input', onInput_LV_EF_Simpson);
+el_LV_ESV_Simpson_m.addEventListener('input', onInput_LV_ESV_Simpson_m);
+el_LV_EF_Simpson_f.addEventListener('input', onInput_LV_EF_Simpson_f);
+el_LV_EF_SV2.addEventListener('input', onInput_LV_EF_SV2);
+el_AM_WEIGHT.addEventListener('input', onInput_AM_WEIGHT);
+el_LV_Mass_Devereux_I.addEventListener('input', onInput_LV_Mass_Devereux_I);
+el_LV_ESV_Simpson.addEventListener('input', onInput_LV_ESV_Simpson);
+el_LV_EF_SV.addEventListener('input', onInput_LV_EF_SV);
+el_LV_EF_Simpson2.addEventListener('input', onInput_LV_EF_Simpson2);
+el_LV_Mass_AL.addEventListener('input', onInput_LV_Mass_AL);
+el_LV_IDs.addEventListener('input', onInput_LV_IDs);
+el_LV_ESV_Simpson_f.addEventListener('input', onInput_LV_ESV_Simpson_f);
+el_LV_IDd.addEventListener('input', onInput_LV_IDd);
+el_LV_LVOTD.addEventListener('input', onInput_LV_LVOTD);
+el_LV_EF_Simpson_m.addEventListener('input', onInput_LV_EF_Simpson_m);
+el_AM_BSA.addEventListener('input', onInput_AM_BSA);
+el_LV_EF_Simpson1.addEventListener('input', onInput_LV_EF_Simpson1);
+        // Add animation when over sentence to click
+        document.querySelectorAll('.text-area-sentence').forEach(label => {
+            label.addEventListener('mouseover', function() {
+               this.style.backgroundColor = '#d3d3d3'; // Darker gray
+            });
+    
+            label.addEventListener('mouseout', function() {
+               this.style.backgroundColor = '';
+            });
+        });
+        // Add slight animation to input focus
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+  function showhide(id) {
+        element=document.getElementById(id);
+        sign=document.getElementById(id+'-sign');
+        if (element.style.display=="none") {
+            element.style.display="block";
+            sign.innerHTML="&#9207;"
+        }
+        else {
+            element.style.display="none";
+            sign.innerHTML="&#9205;"
+        }
+
+    }
+
+function initRTE(container){
+  const name = container.dataset.name;
+
+  container.innerHTML = `
+    <div class="toolbar">
+      <button type="button" data-cmd="bold"><b>B</b></button>
+      <button type="button" data-cmd="italic"><i>I</i></button>
+      <button type="button" data-cmd="underline"><u>U</u></button>
+      <button type="button" data-cmd="insertUnorderedList">• List</button>
+      <button type="button" data-cmd="insertOrderedList">1. List</button>
+      <select class="fontSize">
+        <option value="3">Normal</option>
+        <option value="2">Small</option>
+        <option value="5">Large</option>
+      </select>
+      <select class="heading">
+        <option value="">Paragraph</option>
+        <option value="h1">H1</option>
+        <option value="h2">H2</option>
+      </select>
+      <button type="button" onclick="(u=prompt('URL'))&&document.execCommand('createLink',0,u)">🔗 Link</button>
+      <button type="button" class="imgBtn">🖼️ Img</button>
+    </div>
+    <div id="${name}" class="editor" contenteditable="true" data-placeholder="Write here…">${container.innerHTML}</div>
+    <textarea name="${name}" hidden></textarea>
+    <textarea name="${name}_text" hidden></textarea>
+  `;
+
+  const editor = container.querySelector('.editor');
+  const htmlField = container.querySelector(`textarea[name="${name}"]`);
+  const textField = container.querySelector(`textarea[name="${name}_text"]`);
+  const fontSizeSel = container.querySelector('.fontSize');
+  const headingSel = container.querySelector('.heading');
+  const imgBtn = container.querySelector('.imgBtn');
+
+  // toolbar actions
+  container.querySelectorAll('[data-cmd]').forEach(b=>{
+    b.onmousedown=e=>{
+      e.preventDefault();
+      document.execCommand(b.dataset.cmd);
+      editor.focus();
+      sync();
+    };
+  });
+
+  // font size
+  fontSizeSel.onchange=()=>{document.execCommand('fontSize',false,fontSizeSel.value);editor.focus();sync();};
+
+  // heading
+  headingSel.onchange=()=>{
+    document.execCommand('formatBlock',false,headingSel.value||'p');
+    editor.focus();sync();
+  };
+
+  // image insert
+  imgBtn.onmousedown=e=>{
+    e.preventDefault();
+    const url=prompt("Enter image URL:");
+    if(url){
+      document.execCommand("insertImage",false,url);
+      editor.focus();sync();
+    }
+  };
+
+  // shortcuts
+  editor.onkeydown=e=>{
+    if((e.ctrlKey||e.metaKey)&&'biu'.includes(e.key.toLowerCase())){
+      e.preventDefault();
+      document.execCommand({b:'bold',i:'italic',u:'underline'}[e.key.toLowerCase()]);
+      sync();
+    }
+  };
+
+  // sync sanitized HTML + plain text
+  function sync(){
+    const clean = DOMPurify.sanitize(editor.innerHTML, {
+      ALLOWED_TAGS:['b','i','u','ul','ol','li','a','p','br','font','h1','h2','img'],
+      ALLOWED_ATTR:['href','target','rel','size','src','alt']
+    });
+    htmlField.value = clean;
+    textField.value = editor.textContent.trim();
+  }
+  editor.sync = sync;
+  editor.addEventListener('input',sync);
+  sync();
+}
+
+function appendRTE(rteId, sentenceId){
+  const editor = document.getElementById(rteId);
+  const sentence = document.getElementById(sentenceId);
+  if (!editor || !sentence) return;
+  if (editor.innerText.trim() !== "") {
+    editor.appendChild(document.createElement("br"));
+  }
+  editor.appendChild(sentence.cloneNode(true));
+  if (typeof editor.sync === "function") editor.sync();
+}
+
+document.querySelectorAll('.rte').forEach(initRTE);
+
+//document.getElementById('myForm').addEventListener('submit',e=>{
+//  e.preventDefault();
+//  const data = new FormData(e.target);
+//  for(const [k,v] of data.entries()){
+//    console.log(k, v);
+//  }
+//});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+
+<html>
+    <head>
+        <meta charset="utf-8"  lang="ru">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="/static/css/w3.css">
+        <title>{% block title %}{% endblock %}</title>
+        <style>
+            {% block style %}{% endblock %}
+        </style>
+
+    </head>
+
+
+<body {% block body_attrs %}{% endblock %}>
+
+{% set navigation_bar = [
+    ('/teaching_tests', 'teaching_tests', 'Обучающие тесты'),
+    ('/testing_tests', 'testing_tests', 'Проверочные тесты'),
+    ('/cmes', 'cmes', 'Модули'),
+    ('/posts', 'stuff', 'Материалы'),
+    ('/profile', 'profile', 'Профиль'),
+] -%}
+
+{% set active_page = active_page|default('index') -%}
+
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/index" {% if 'index' == active_page %} class="active"{% endif %}>Эходата 3.0</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+
+        {% for href, id, caption in navigation_bar %}
+            <li{% if id == active_page %} class="active"{% endif %}>
+            <a href="{{ href|e }}">{{ caption|e }}</a></li>
+        {% endfor %}
+
+
+
+        <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Выйти</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+    <main role="main" class="container">
+
+    <div class="starter-template" id="contents">{% block content %}{% endblock %}</div>
+
+
+    <div class="starter-template" id="footer">
+        <hr>Администрирование: <a href="mailto:okhotin@nacmedset-edu.ru">Охотин А. Н.</a> <p>Техническая поддержка: <a href="mailto:dr.vmosipov@gmail.com">Осипов В. М.</a></br>
+        {% block footer %}
+       <script type="text/javascript" src="/scripts/widgEditor.js"></script>
+        {% endblock %}

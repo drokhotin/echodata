@@ -1,0 +1,237 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0 {% endblock %}
+
+    {% block body_attrs %} onload="selectrow('{{ record.id }}');" {% endblock %}
+
+
+{% block style %}
+
+<style>
+    .nicEdit-main {
+        overflow: auto !important;
+        height: 5.5em;
+        width: 300px;
+    }
+</style>
+
+{% endblock %}
+{% block script %}
+
+<script type="text/javascript" src="/static/scripts/nicEdit.js"></script>
+
+{% endblock %}
+
+
+
+{% block content %}
+<div class="w3-container w3-medium">
+{% if mode=='html' %}
+<script type="text/javascript">
+	bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
+</script>
+{% endif %}
+
+<a href="/record/{{ record.id }}?m=html" id="edit"  target='right'></a>
+<a href="/record/{{ record.id }}?m=markup" id="markup"  target='right'></a>
+<a href="/recordduplicate/{{ record.id }}" id="duplicate"  target='right'></a>
+
+<form method="post" enctype="multipart/form-data">
+
+{% if mode in ['markup', 'html'] %}
+    <input type="file" name='file'  id='file' style='display:none;' onchange="listAttachments()">
+    <input type='text' name='title' value='{{ record.title }}'> |
+    <input type='text' name='sort' value='{{ record.sort }}'> |
+    {{ date_form|safe }} | {{ time_form|safe }} | <span onclick="attach()" id='attach'>файл</span>
+{% else %}
+    [ {{ record.patient.surname }} {{ record.patient.name }} ]
+    [ {{ record.title }} | {{ record.sort }} ] |
+    [ {{ record.recorddate|datetime('medium') }} ] |
+    [ {{ record.author.name }} {{ record.author.surname }} ]
+    {% if record.attachments|length > 0 %}
+    <select onchange='loadattachment(this.value)'>
+    <option value=0>Приложения</option>
+    {% for attachment in record.attachments %}
+        <option value={{ attachment.id }} id="att{{ attachment.id }}">{{ attachment.filename|oldfilename('short') }}</option>
+    {% endfor %}
+    </select>
+    {% endif %}
+{% endif %}
+
+
+<hr>
+{{ '<textarea name="contents" id="contents" style="margin:5px;height:70%;width:100%;" oninput="abbrev()">'|safe
+   if (mode in ['markup', 'html'])
+   else '<div id="contents" class="w3-container w3-border w3-border-green w3-pale-green" style="overflow:auto; height:70%;width:100%;">'|safe }}
+{{ record.html|safe if mode in ['view', 'html'] else record.html|markup }}
+
+{{ '</textarea>'|safe if mode in ['html', 'markup'] else '</div>'|safe }}
+
+
+
+<hr>
+
+
+<span id='buttons'>
+
+{% if mode=='view' %}
+  {% if record.author.id == g.doctor.id %}
+    {% if record.versions|length > 0 %}
+       <a class="w3-button w3-teal" href={{ url_for('version', rid=record.id) }}>Версия:
+    {% else %}
+       Версия:
+    {% endif %}
+    {{ record.version }} (от {{ record.modified|datetime('medium') }}) {{ '</a>'|safe if record.versions|length > 0 }}
+
+
+  <button class="w3-button w3-teal" type="button" onclick="getElementById('edit').click()"><b>B</b><i>I</i><u>U</u></button>
+  <button class="w3-button w3-teal" type="button" onclick="getElementById('markup').click()">#*_/</button>
+  {% endif %}
+  <button class="w3-button w3-teal" type="button" id="print" onclick="window.open('/recordprint/{{ record.id }}')"><b>&#128424;</b></button>
+  <button class="w3-button w3-teal" type="button" onclick="getElementById('duplicate').click()"><b>++</b></button>
+
+{% elif mode in ['html', 'markup'] %}
+    <button class="w3-button w3-teal" id="save" type="submit">Сохранить</button>
+
+{% endif %}
+
+
+</span> 
+</form>
+
+
+</div>
+
+
+<script>
+    {% if isnew == 'new' %}
+    var leftframe = parent.document.getElementById('leftframe');
+    var innerDoc = leftframe.contentDocument || leftframe.contentWindow.document;
+    leftframe.src+=''
+    {% endif %}
+    {% if isnew in ['saved'] %}
+    var leftframe = parent.document.getElementById('leftframe');
+    var innerDoc = leftframe.contentDocument || leftframe.contentWindow.document;
+    innerDoc.getElementById('rline{{ record.id }}').innerHTML =
+        `<td>
+            <a href="/record/{{ record.id }}" id="a{{ record.id }}"  target='right'></a>
+            {{ record.title }}
+        </td>
+        <td>
+            {{ record.recorddate|datetime('date') }}
+        </td>
+        <td>
+            {{ record.author.surname }} {{ record.author.name[0] }}.
+        </td>`;
+
+    {% endif %}
+
+    selectrow({{ record.id }});
+
+    function attach() {
+        var fileinput = document.getElementById('file');
+        fileinput.click();
+    }
+
+    function listAttachments() {
+        var attach = document.getElementById('attach');
+        var fileinput = document.getElementById('file');
+        var txt='файлы: '
+        if ('files' in fileinput) {
+            if (fileinput.files.length > 0) {
+                for (var i = 0; i < fileinput.files.length; i++) {
+                    var file = fileinput.files[i];
+                    txt += file.name + ' (';
+                    txt += fileinput.files[i].size/1000 + ' kb) ';
+                }
+            }
+        }
+        attach.innerHTML=txt;
+    }
+
+    function loadattachment(aid=0) {
+        var div = document.getElementById('contents');
+        var buttons = document.getElementById('buttons');
+        var displayable=['.txt', '.pdf', '.png', '.jpg', 'jpeg', '.gif']
+        if (aid!=0) {
+            var filename = document.getElementById('att'+aid).innerHTML
+            if (displayable.includes(filename.slice(-4))) {
+                if (filename.slice(-4)=='.pdf') {
+                    div.innerHTML='<iframe width=100% height=100% src="/loadattachment/'+aid+'"></iframe>';
+                }
+                else {
+                    div.innerHTML='<img width=100% src="/loadattachment/'+aid+'">';
+                }
+            }
+            else {
+                div.innerHTML=`Режим показа не работает для этого приложения. Вы можете загрузить его.
+                    <button class="w3-button w3-teal" type="button" onclick="document.getElementById('download').click()">Загрузить</button>`;
+            }
+            buttons.innerHTML=`
+                <a href='/deleteattachment/`+aid+`' id='delete'></a>
+                <a href='/loadattachment/`+aid+`?m=attach' id='download'></a>
+                <button class="w3-button w3-teal" type="button" onclick="document.getElementById('delete').click()">&#128686;</button>
+                <button class="w3-button w3-teal" type="button" onclick="document.getElementById('download').click()">&DoubleDownArrow;</button>`
+        }
+        else {
+
+            location.href='{{ url_for("record", rid=record.id, m=mode) }}';
+        }
+
+
+
+    }
+
+    function abbrev() {
+        var str = document.getElementById("contents").value;
+        var res = str.replace("Microsoft", "W3Schools");
+        if (str!=res) {
+            pos = document.getElementById("contents").selectionStart;
+            document.getElementById("contents").value = res;
+            document.getElementById("contents").selectionStart=pos;
+            document.getElementById("contents").selectionEnd=pos;
+        }
+
+    }
+
+
+
+    function selectrow(rid) {
+        var leftframe = parent.document.getElementById('leftframe');
+        var innerDoc = leftframe.contentDocument || leftframe.contentWindow.document;
+        var button = document.getElementById('bubb');
+        rows=innerDoc.getElementsByClassName('recordrow');
+
+        for (i = 0; i < rows.length; i++) {
+          rows[i].className = "recordrow";
+          if (rows[i].id=="rline"+rid) {
+              rows[i].className = "recordrow w3-teal";
+          }
+          }
+
+
+    }
+
+
+    document.onkeydown = function(e) {
+        if (e.ctrlKey && e.which == 80) {
+            e.preventDefault();
+            document.getElementById('print').click();
+            }
+        else if (e.ctrlKey && e.which == 83) {
+            e.preventDefault();
+            document.getElementById('save').click();
+        }
+    }
+
+</script>
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+

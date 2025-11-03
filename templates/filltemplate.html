@@ -1,0 +1,51 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: {{ patient.surname }} {{ patient.name }} {{ patient.fathername }} {% endblock %}
+{% block style %}
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="w3-container">
+
+<form method="post">
+
+<hr>
+Дата: {{ date_form|safe }} &nbsp;&nbsp;
+Время: {{ time_form|safe }} <hr>
+
+{{ form|safe }}
+<input type="hidden" name="name" value="{{ template.title }}">
+
+<hr>
+<input type="submit" value="Отправить">
+</form>
+</div>
+
+<script>
+    function showhide(id) {
+        element=document.getElementById(id);
+        sign=document.getElementById(id+'s');
+        if (element.style.display=="none") {
+            element.style.display="block";
+            sign.innerHTML="&#9207;"
+        }
+        else {
+            element.style.display="none";
+            sign.innerHTML="&#9205;"
+        }
+
+    }
+
+
+</script>
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+

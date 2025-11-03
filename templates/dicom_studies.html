@@ -1,0 +1,102 @@
+{% extends "basic-2.html" %}
+
+{% block title %}Эходата 3.0: список DICOM-исследований{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+
+{% block index %}
+  <div id="ip-address">Loading your IP address...</div>
+  
+  <script>
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('ip-address').textContent = 'Your IP Address: ' + data.ip;
+      })
+      .catch(error => {
+        document.getElementById('ip-address').textContent = 'Could not retrieve IP address';
+      });
+  </script>
+
+<form method="get" class="w3-container w3-card-4 w3-light-grey w3-text-green w3-margin">
+
+<h2 class="w3-center">Поиск</h2>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <input class="w3-input w3-border" name="surname" type="text" placeholder="Фамилия" value="{{ surname }}">
+    </div>
+</div>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <input class="w3-input w3-border" name="name" type="text" placeholder="Имя" value="{{ name }}">
+    </div>
+</div>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <input class="w3-input w3-border" name="fathername" type="text" placeholder="Отчество" value="{{ fathername }}">
+    </div>
+</div>
+
+
+<button class="w3-button w3-block w3-section w3-green w3-ripple w3-padding">Найти</button>
+
+</form>
+
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="w3-container">
+
+
+<table class="w3-table w3-striped w3-hoverable">
+
+    <tr>
+        <th>
+  
+            Name
+        </th>
+        <th>
+            Birth date
+        </th>
+        <th>
+            Study date
+        </th>
+    </tr>
+
+
+
+{% for study in studies |sort(attribute="StudyDate.value", reverse=True) %}
+    <tr onclick='window.location.href="/dicom_sr_report/{{ study.StudyInstanceUID }}"'>
+        <td>
+            {{ study.PatientName }}
+        </td>
+        <td>
+            {{ study.PatientBirthDate }}
+        </td>
+        <td>
+            {{ study.StudyDate }}
+        </td>
+    </tr>
+
+{% endfor %}
+
+
+
+
+</table>
+</div>
+
+{% endblock %}
+
+

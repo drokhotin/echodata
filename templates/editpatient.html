@@ -1,0 +1,41 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: завести нового пациента{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+<div class='w3-container'>
+
+<form method="post" onsubmit="return confirm('Вы точно хотите изменить данные?')">
+    <p>Фамилия:
+    <p><input type=text name=surname  style="width:50%" value="{{ patient.surname }}">
+    <p>Имя:
+    <p><input type=text name=name  style="width:50%" value="{{ patient.name }}">
+    <p>Отчество:
+    <p><input type=text name=fathername value="{{ patient.fathername }}" style="width:50%">
+    <p>Дата рождения: {{ date_form|safe }}
+    <p>Пол:  <input type="radio" name=sex value=м {{ 'checked="checked"' if patient.sex=='м' }}>&nbsp; М &nbsp;
+    <input type="radio" name=sex value=ж {{ 'checked="checked"' if patient.sex=='ж' }}>&nbsp; Ж
+    <p>Адрес:
+    <p><textarea name=address  style="width:100%">{{ patient.address }}</textarea>
+    <p>Телефон:
+    <p><input type=text name=phone value="{{ patient.phone }}" style="width:100%">
+    <p>E-mail:
+    <p><input type=text name=email value="{{ patient.email }}" style="width:100%">
+    <p>Другое:
+    <p><textarea name=comments  style="width:100%">{{ patient.comments }}</textarea>
+
+
+    <p><input type=submit value="Отправить"></p>
+</form>
+
+</div>
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "basic.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: новая запись{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+<h2>Новая запись</h2>
+Вы вошли как: {{ g.doctor.name + ' ' + g.doctor.surname }}
+
+
+<form method="post">
+
+    <p>Название:
+    <p><input type=text name=title value="{{ title }}" style="width:50%">
+    <textarea name=contents>{{ contents }}</textarea>
+    <p><input type=submit value=Отправить></p>
+</form>
+
+
+
+
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+
+
+</div></main>
+
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  </body>
+</html>

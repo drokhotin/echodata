@@ -1,0 +1,45 @@
+{% extends "basic.html" %}
+{% set active_page = "patients" %}
+
+{% block title %}Эходата 3.0: завести нового пациента{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+<h2>Завести нового пациента</h2>
+Вы вошли как: {{ g.doctor.name + ' ' + g.doctor.surname }}
+
+
+<form method="post" class="w3-container w3-card-4 w3-light-grey w3-text-green w3-margin">
+
+    <p>Фамилия:
+    <p><input type=text name=surname value="{{ surname }}" style="width:50%">
+    <p>Имя:
+    <p><input type=text name=name value="{{ name }}" style="width:50%">
+    <p>Отчество:
+    <p><input type=text name=fathername value="{{ fathername }}" style="width:50%">
+    <p>Дата рождения: {{ date_form|safe }}
+    <p>Пол:  <input type="radio" name=sex value=м>&nbsp; М &nbsp; <input type="radio" name=sex value=ж>&nbsp; Ж
+    <p>Адрес:
+    <p><input type=text name=address value="{{ address }}" style="width:100%">
+    <p>Телефон:
+    <p><input type=text name=phone value="{{ phone }}" style="width:100%">
+    <p>E-mail:
+    <p><input type=text name=email value="{{ email }}" style="width:100%">
+    <p>Комментарии:
+    <p><input type=text name=comments value="{{ comments }}" style="width:100%">
+    <p>Уникальный идентификатор (не обязательно):
+    <p><input type=text name=uniqueid value="{{ uniqueid }}" style="width:100%">
+    <p><input type=submit value=Отправить></p>
+</form>
+
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+

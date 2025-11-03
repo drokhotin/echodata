@@ -1,0 +1,181 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+        <title>EchoView</title>
+    </head>
+
+
+<style>
+
+.container1{
+    width: 480px;
+    overflow:hidden;
+    display:block;
+    height: 480px;
+}
+#glass{
+}
+
+</style>
+
+
+
+    <body onload="InitSlides()">
+        <nav class="navbar navbar-inverse">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar">1</span>
+                <span class="icon-bar">2</span>
+                <span class="icon-bar">3</span>
+              </button>
+              <a class="navbar-brand" href="/">EchoView</a>
+            </div>
+          </div>
+        </nav>
+
+<div class="container" align="center">
+    <div class="row">
+        <button onclick="Synchronize(2)">Sync 2</button>
+        <button onclick="Synchronize(1.5)">Sync 3/2</button>
+        <button onclick="Synchronize(1)">Sync 1</button>
+        <button onclick="Synchronize(0.5)">Sync 1/2</button>
+        <button onclick="Synchronize(0.25)">Sync 1/4</button>
+    </div>
+
+    <div class="row" align="center">
+        <div class="col-md-5">
+
+          <input type="range" min="0" max="100" value="50" id="top1" onchange="margin(1)">
+          <input type="range" min="0" max="100" value="50" id="left1" onchange="margin(1)">
+          <button onclick="ChangeSlide(1,-1)">PREVIOUS</button>
+          <b id="counter1"></b>
+          <button onclick="ChangeSlide(1,1)">NEXT</button>
+          <div class="container1" id="media1">
+               <video id="video1" loop=true autoplay=true>\
+        <source src="" type="video/ogg"></video>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+
+          <input type="range" min="0" max="100" value="50" id="top2" onchange="margin(2)">
+          <input type="range" min="0" max="100" value="50" id="left2" onchange="margin(2)">
+          <button onclick="ChangeSlide(2,-1)">PREVIOUS</button>
+          <b id="counter2"></b>
+          <button onclick="ChangeSlide(2,1)">NEXT</button>
+          <div class="container1" id="media2">
+               <video id="video2" loop=true autoplay=true>\
+        <source src="" type="video/ogg"></video>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+
+    </div>
+
+    <div class="row" align="center">
+
+        <div class="col-md-5">
+
+          <input type="range" min="0" max="100" value="50" id="top3" onchange="margin(3)">
+          <input type="range" min="0" max="100" value="50" id="left3" onchange="margin(3)">
+          <button onclick="ChangeSlide(3,-1)">PREVIOUS</button>
+          <b id="counter3"></b>
+          <button onclick="ChangeSlide(3,1)">NEXT</button>
+          <div class="container1" id="media3">
+               <video id="video3" loop=true autoplay=true>\
+        <source src="" type="video/ogg"></video>
+          </div>
+
+        </div>
+
+        <div class="col-md-1"></div>
+
+        <div class="col-md-5">
+
+          <input type="range" min="0" max="100" value="50" id="top4" onchange="margin(4)">
+          <input type="range" min="0" max="100" value="50" id="left4" onchange="margin(4)">
+          <button onclick="ChangeSlide(4,-1)">PREVIOUS</button>
+          <b id="counter4"></b>
+          <button onclick="ChangeSlide(4,1)">NEXT</button>
+          <div class="container1" id="media4">
+               <video id="video4" loop=true autoplay=true>\
+        <source src="" type="video/ogg"></video>
+          </div>
+
+
+        </div>
+        <div class="col-md-1"></div>
+
+    </div>
+
+
+
+<div class="row">
+    (c) Artemiy Okhotin, 2016
+</div>
+</div>
+<script>
+var pictures = new Array();
+var num = [0,0,0,0,0];
+
+{% for m in media %}
+    {% if m.modality=='video' %}
+        pictures.push("{{ m.path }}");
+    {% endif %}
+{% endfor %}
+
+
+function margin(v) {
+    var top = document.getElementById('top'+v).value;
+    var left = document.getElementById('left'+v).value;
+	var cont=document.getElementById('media'+v);
+	var vid=document.getElementById('video'+v);
+    
+    var topMarg = cont.offsetHeight - vid.offsetHeight;
+    var leftMarg = cont.offsetWidth - vid.offsetWidth;
+
+    vid.style.marginLeft = left * leftMarg / 100;
+    vid.style.marginTop = top * topMarg / 100;
+
+};
+
+function ChangeSlide(v, n=0) {
+num[v]=num[v]+pictures.length+n;
+num[v]=num[v]%pictures.length;
+document.getElementById('video'+v).src=pictures[num[v]];
+document.getElementById('counter'+v).innerHTML=' [ '+(num[v]+1)+' of ' +pictures.length+' ] ';
+
+};
+
+function Synchronize(r) {
+for (i = 1; i < 5; i++) { 
+    vid = document.getElementById("video"+i);
+    vid.playbackRate = r * vid.duration;
+    vid.currentTime = 0;
+    }
+};
+
+
+function InitSlides() {
+ChangeSlide(1,0);
+ChangeSlide(2,1);
+ChangeSlide(3,2);
+ChangeSlide(4,3);
+setTimeout(function(){ margin(1); }, 500);
+setTimeout(function(){ margin(2); }, 500);
+setTimeout(function(){ margin(3); }, 500);
+setTimeout(function(){ margin(4); }, 500); 
+};
+
+
+</script>
+
+    </body>
+</html>

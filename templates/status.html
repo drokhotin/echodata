@@ -1,0 +1,136 @@
+{% extends "basic-0.html" %}
+{% set active_page = "wards" %}
+
+{% block title %}Эходата 3.0: госпитализировать{% endblock %}
+
+{% block body_attrs %} onload="selectrow('{{ status.id }}');" {% endblock %}
+
+
+{% block head %}
+
+{% endblock %}
+{% block content %}
+<div id='right'>
+<form method="post" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin" onsubit="return confirm('Сохранить изменения?')">
+    <a href="{{ url_for('records', id=status.patient.id) }}" target="_top">
+        {{ status.patient.surname }} {{ status.patient.name }} {{ status.patient.fathername }}</a>
+    |
+    <a href="{{ url_for('wards', patient=status.patient.id, ward=status.ward.id) }}" target="_top">{{ status.ward.title }}</a> | 
+    {{ status.admission|datetime('medium') }} | {{ status.datemodified|datetime('medium') }} 
+ </p>
+
+    <label>Палата (койка)</label>
+    <select name="room"  class="w3-select" onchange="showRoom(value);" style="width:20%;">
+    <option value=''> - </option>
+    {% for room in rooms %}
+            <option value='{{ room.room }}' {{ 'selected' if location.room == room.room }}>
+                {{ room.room }}
+            </option>
+    {% endfor %}
+    </select>
+
+    {% for room in rooms %}
+    <span id='room{{ room.room }}' {{ "style='display:none'" | safe if  location.room != room.room }} class="room">
+    <select name="{{ room.room }}bed"  class="w3-select" style="width:20%;">
+        <option value=''> - </option>
+
+        {% for bed in room.beds %}
+            <option value='{{ bed }}' {{ 'selected' if (location.bed == bed and location.room == room.room) }}>
+                {{ bed }}
+            </option>
+        {% endfor %}
+    </select>
+    </span>
+    {% endfor %}
+
+
+    <script>
+        function showRoom(room) {
+            rooms = document.getElementsByClassName('room');
+            for (i = 0; i < rooms.length; i++) {
+                if (rooms[i].id=='room'+room) {
+                    rooms[i].style.display="";
+                }
+                else {
+                    rooms[i].style.display="none";
+                }
+            }
+        }
+    </script>
+
+
+
+
+    {{ form|replace('<input', '<input oninput="notSaved();" onchange="notSaved();" ')|replace('<textarea', '<textarea onchange="notSaved();" ')|safe }}
+
+
+    <button type=submit class="w3-button w3-green" id="save">Сохранить</button>
+
+    <a href='{{ url_for('printstatus', sid = status.id) }}' id='printrecord' target='_blank'></a>
+
+
+
+    <button type=button class="w3-button w3-green" id="print" onclick="document.getElementById('printrecord').click()">Распечатать</button>
+
+    <button type=button class="w3-button w3-green" id="signout" onclick="discharge();">Выписать</button>
+
+
+</form>
+</div>
+
+
+
+<script>
+
+function discharge() {
+        var signedout='test';
+        if (confirm('Выписать?')) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var signedout = this.responseText;
+            }
+        };
+        xhttp.open("GET", "{{ url_for('discharge', sid=status.id) }}", true);
+        xhttp.send();
+        this.innerHTML='Выписан';
+        parent.location.href = "{{ url_for('wards', ward=status.ward.id) }}";
+    }
+
+    };
+
+
+function notSaved() {
+    document.getElementById('print').disabled=true;
+    };
+
+
+function selectrow(rid) {
+    var leftframe = parent.document.getElementById('leftframe');
+    var innerDoc = leftframe.contentDocument || leftframe.contentWindow.document;
+    rows=innerDoc.getElementsByClassName('recordrow');
+    for (i = 0; i < rows.length; i++) {
+        rows[i].className = "recordrow";
+        if (rows[i].id=="rline"+rid) {
+            rows[i].className = "recordrow w3-teal";
+        }
+    }
+}
+
+document.onkeydown = function(e) {
+    if (e.ctrlKey && e.which == 80) {
+        e.preventDefault();
+        document.getElementById('print').click();
+        }
+    else if (e.ctrlKey && e.which == 83) {
+        e.preventDefault();
+        document.getElementById('save').click();
+    }
+}
+
+
+
+</script>
+
+{% endblock %}
+

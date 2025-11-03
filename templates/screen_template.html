@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+        <title>EchoView</title>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-inverse">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/">EchoView</a>
+            </div>
+          </div>
+        </nav>
+
+<div class="container">
+
+<div class="row" align="center">
+
+<a href="/"><button onclick="">Studies list</button></a>
+<button onclick="ChangeSlide(-1)">PREVIOUS</button>
+<b id="counter"></b>
+<button onclick="ChangeSlide(1)">NEXT</button>
+</div>
+<div class="row">
+<p id="media">
+
+</p></div>
+
+<div class="row">
+    <button onclick="openInNewTab('{{ study_id }}')">StressEcho</button>
+</div>
+
+<div class="row">
+    (c) Artemiy Okhotin, 2016
+</div>
+</div>
+<script>
+var pictures = new Array();
+var num=0;
+
+{% for m in media %}
+    {% if m.modality=='video' %}
+        pictures.push('<video class="MySlides" id="media{{ m.num }}" loop=true autoplay=true>\
+        <source src="{{ m.path }}" type="video/ogg"></video>')
+    {% endif %}
+    {% if m.modality=='image' %}
+        pictures.push('<img class="MySlides" id="media{{ m.num }}" src="{{ m.path }}">')
+    {% endif %}
+{% endfor %}
+
+
+
+ChangeSlide(0)
+
+function openInNewTab(url) {
+  var win = window.open('/stress/'+url, '_blank');
+  win.focus();
+}
+
+function ChangeSlide(n=1) {
+num=num+pictures.length+n;
+num=num%pictures.length;
+document.getElementById('media').innerHTML=pictures[num];
+document.getElementById('counter').innerHTML=' [ '+String(num+1)+' of '+String(pictures.length)+' ] ';
+}
+
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,59 @@
+{% extends "basic.html" %}
+
+{% block title %}Эходата 3.0: список DICOM-исследований{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="w3-container">
+
+<p> Имя пациента: {{ metadata.patient_name }}
+<p> Дата рождения: {{ metadata.patient_birth_date }}
+<p> Дата исследования: {{ metadata.study_date }}
+<p> Оборудование: {{ metadata.manufacturer}}
+{{ metadata.model_name }}
+({{ metadata.station_name }})
+
+
+<table class="w3-table w3-striped w3-hoverable">
+
+
+    {% set grouped_observations = {} %}
+    {% for obs in observations %}
+      {% set site = obs.get('Finding Site',
+                            obs.get('Patient Characteristics', 'Unknown site')
+                            ) %}
+      {% if site not in grouped_observations %}
+        {% set _ = grouped_observations.update({site: []}) %}
+      {% endif %}
+      {% set _ = grouped_observations[site].append(obs) %}
+    {% endfor %}
+
+    {% for site, obs_list in grouped_observations.items() %}
+    <h2>{{ site | dicom_translate }}</h2>
+    {% for obs in obs_list %}
+    <p> {{ obs.get('measurement', '') | dicom_translate(abbrev=True) }} {{ "%.2f"|format(obs.get('Value', 0)|float) }}
+        {{ obs.get('Units', '') | dicom_translate(abbrev=True) }} |
+        
+        {{ obs.get('Image Mode', '') | dicom_translate(abbrev=True) }}
+        {% if obs.get('Measurement Method', '') %} | {{ obs.get('Measurement Method', '') | dicom_translate(abbrev=True) }}{% endif %}
+        {% if obs.get('Direction of Flow', '') %} | {{ obs.get('Direction of Flow', '') | dicom_translate(abbrev=True) }}{% endif %}
+        
+
+        {% endfor %}
+    {% endfor %}
+
+
+
+
+
+</table>
+</div>
+
+{% endblock %}
+
+

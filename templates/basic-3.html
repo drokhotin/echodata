@@ -1,0 +1,53 @@
+
+<html>
+    <head>
+        <meta charset="utf-8"  lang="ru">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/css/w3.css">
+        <link rel="stylesheet" href="/static/css/echodata.css"> 
+
+
+        <title>{% block title %}{% endblock %}</title>
+
+            {% block style %}{% endblock %}</style>
+
+    </head>
+
+
+<body {% block body_attrs %}{% endblock %}>
+{% set navigation_bar = [
+    ('/patients', 'patients', 'Пациенты'),
+    ('/wards', 'wards', 'Отделение'),
+    ('/config', 'config', 'Настройки'),
+    ('/search', 'search', 'Поиск'),
+    ('/profile', 'profile', 'Профиль'),
+] -%}
+
+
+{% set active_page = active_page|default('index') -%}
+
+<div class="w3-bar w3-black" style="height:5vh">
+ <a class="w3-bar-item w3-button" href="/index" {% if 'index' == active_page %} class="active"{% endif %}>Эходата 3.0</a> 
+        {% for href, id, caption in navigation_bar %}
+          <a class="w3-bar-item w3-button {% if id == active_page %} active{% endif %}"
+            href="{{ href|e }}">{{ caption|e }}</a>  
+        {% endfor %}
+
+
+    <a href="/logout" class="w3-bar-item w3-button {% if 'login' == active_page %} active"{% endif %} style="float:right;">
+        {{ 'Выйти ('+g.doctor.surname+')' if g.doctor else 'Войти' }}</a>
+</div>
+
+{% block top %}{% endblock %}
+  <div class="w3-row">
+    <div class="w3-col m3 l3" style="height:95vh">     {% block left %}{% endblock %}  </div>
+    <div class="w3-col m5 l5" style="height:95vh">   {% block middle %}{% endblock %}</div>
+    <div class="w3-col m4 l4" style="height:95vh"> {% block right %}{% endblock %}</div>
+  </div>
+
+
+
+    </main>
+    </body>
+</html>

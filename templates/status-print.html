@@ -1,0 +1,37 @@
+{% extends "basic-0.html" %}
+
+{% block title %} {% endblock %}
+
+{% block body_attrs %} onload="myPrint()"{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+
+
+{% block content %}
+<div class="w3-container w3-small" style="margin-right:5em;">
+             Пациент: {{ status.patient.surname }} {{ status.patient.name }} {{ status.patient.fathername }},
+             {{ status.patient.dob | datetime('age') }}
+             [{{ status.ward.title }}, [{{ status.location }}]
+
+             <span style="float:right;">{{ record.recorddate | datetime('full') }}</span><hr>
+             {{ record.html|replace("Назначения",'<div style="page-break-inside:avoid;">Назначения',1)|safe }}
+             </div>
+             <hr>
+             {{ status.whomodified.signature | replace('\n','<br>') | safe }}
+
+</div>
+<script>
+
+function myPrint() {
+    window.print();
+    setTimeout(window.close, 5);
+}
+</script>
+
+
+{% endblock %}
+
+
+

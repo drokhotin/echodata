@@ -1,0 +1,45 @@
+{% extends "basic-0.html" %}
+{% set active_page = "config" %}
+
+{% block title %}Эходата 3.0: таблица соответствия DICOM{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+
+
+<form method="post" class="w3-container w3-card w3-light-grey w3-text-green w3-margin" enctype="multipart/form-data">
+    <h2>Таблица конвертации DICOM</h2>
+
+    
+
+
+
+
+    <p><input class="w3-input" type=file name=file   oninput="notSaved()" id=file accept=".xlsx">
+    <label class="w3-label">Файл .xlsx</label>
+
+    <p><input class="w3-button w3-green" type=submit value=Сохранить></p>
+
+
+</form>
+
+Таблица конверсии:
+     <a href="{{ url_for('uploaded_file', filename=filename, m='attach') }}"> 
+            {{ ''.join(filename.split('-')[4:]) }}
+            </a>
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+
+
+</div></main>
+
+</html>

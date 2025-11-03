@@ -1,0 +1,51 @@
+{% extends "basic-0.html" %}
+
+{% block title %} {% endblock %}
+
+{% block body_attrs %} onLoad="functionprint()"{% endblock %}
+
+{% block style %}
+<style>
+
+#content {
+    display: table;
+}
+
+#pageFooter {
+    display: table-footer-group;
+}
+
+#pageFooter:after {
+    counter-increment: page;
+    content:"Page " counter(page);
+    left: 0;
+    top: 100%;
+    white-space: nowrap;
+    z-index: 20px;
+    -moz-border-radius: 5px;
+    -moz-box-shadow: 0px 0px 4px #222;
+    background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+    background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+  }
+
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<div id="content">
+  <div id="pageFooter">Page            <hr>{{ config.footer|safe }}
+</div>
+              {{ record.html|safe }}
+
+</div>
+
+
+
+{% endblock %}
+
+
+

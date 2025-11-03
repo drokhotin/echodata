@@ -1,0 +1,41 @@
+{% extends "basic-2.html" %}
+{% set active_page = "config" %}
+
+{% block title %}Эходата 3.0{% endblock %}
+
+
+{% block top %}
+<div class="w3-container">
+
+</div>
+
+{% endblock %}
+
+{% block index %}
+  <table class='w3-table'>
+      <tr>
+           <td>   <a href="{{ url_for('useredit') }}" target="right">Профиль</a> </td>
+      </tr>
+      <tr>
+           <td> <a href="{{ url_for('userprint') }}" target="right">Настройки печати</a> </td>
+      </tr>
+      <tr>
+           <td> <a href="{{ url_for('usertemplates') }}" target="right">Выбор шаблонов</a> </td>
+      </tr>
+
+
+
+
+  </table>
+{% endblock %}
+
+{% block content %}
+  <iframe src="{{ url_for('useredit') }}" id="rightframe" name="right" width=100% height=100%></iframe>
+{% endblock %}
+
+
+
+{% block footer %}
+{% endblock %}
+
+

@@ -1,0 +1,104 @@
+{% extends "basic.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: сообщение {% endblock %}
+{% block style %}
+label {
+    font-weight: normal !important;
+}
+
+.square {
+    font-size: 12px;
+    float:left;
+    width:250px;
+    height:100px;
+}
+
+#container {
+    width: 1001px;
+    height: 110px;
+}
+
+{% endblock %}
+{% block content %}
+
+
+
+
+Вы вошли как: {{ g.doctor.name + ' ' + g.doctor.surname }}
+
+
+    <div class="square ui-widget ui-widget-content"  id="div1">Col 01</div>
+    <div class="square ui-widget ui-widget-content"  id="div2">Col 02</div>
+
+
+<div id="txt"></div>
+
+<hr>
+
+<textarea id="demo">{{ text }}</textarea>
+
+<hr>
+
+<p>Click the button to do a global searchfor at least one "o" in a string.</p>
+
+<button onclick="loadDoc()">Try it</button>
+
+
+<script>
+var total_width = 500;
+
+$("#div1").resizable({
+    grid: [1, 10000]
+}).bind( "resize", resize_other);
+
+
+function resize_other(event, ui) {
+    var width = $("#div1").width();
+
+    if(width > total_width) {
+        width = total_width;
+
+        $('#div1').css('width', width);
+    }
+
+    $('#div2').css('width', (total_width - width));
+}
+
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  document.getElementById("demo").innerHTML = 'loading...';
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("demo").innerHTML =
+      this.responseText;
+    }
+  };
+  xhttp.open("GET", "/internalrequest/запрос", true);
+  xhttp.send();
+};
+
+
+function myFunction() {
+  var str = "Hellooo World! \n.jkjk! Hello W3Schools!jhj";
+  var patt1 = /\n\.[^!]+!/;
+  var result = str.match(patt1);
+  document.getElementById("demo").innerHTML = result;
+}
+</script>
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+
+
+</div></main>
+
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  </body>
+</html>

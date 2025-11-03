@@ -1,0 +1,66 @@
+
+<html>
+    <head>
+        <meta charset="utf-8"  lang="ru">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="/static/css/echodata.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+
+        <title>{% block title %}{% endblock %}</title>
+
+            {% block style %}{% endblock %}</style>
+
+    </head>
+
+
+<body {% block body_attrs %}{% endblock %}>
+{% set navigation_bar = [
+    ('/patients', 'patients', 'Пациенты'),
+    ('/wards', 'wards', 'Отделение'),
+    ('/config', 'config', 'Настройки'),
+    ('/search', 'search', 'Поиск'),
+    ('/profile', 'profile', 'Профиль'),
+] -%}
+
+
+{% set active_page = active_page|default('index') -%}
+
+<div class="Top">
+<nav><ul>
+     <li> <a href="/index" {% if 'index' == active_page %} class="active"{% endif %}>Эходата 3.0</a> </li>
+
+        {% for href, id, caption in navigation_bar %}
+    <li>        <a {% if id == active_page %} class="active"{% endif %}
+            href="{{ href|e }}">{{ caption|e }}</a>  </li>
+        {% endfor %}
+
+<li style="float:right;">
+    <a href="/logout" {% if 'login' == active_page %} class="active"{% endif %}>
+        <span class="glyphicon glyphicon-log-in"></span>
+        {{ 'Выйти ('+g.doctor.surname+')' if g.doctor else 'Войти' }}</a>
+</li>
+
+</ul>
+</nav>
+{% block top %}{% endblock %}
+</div>
+
+<div class="Container">
+
+<div class="Left">
+
+    <div class="starter-template" id="contents">{% block index %}{% endblock %}</div>
+</div>
+<div class="Middle">
+    <div class="starter-template" id="main">{% block content %}{% endblock %}</div>
+</div>
+
+
+
+
+    </main>
+    </body>
+</html>

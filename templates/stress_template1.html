@@ -1,0 +1,190 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+        <title>EchoView</title>
+    </head>
+
+
+<style>
+
+.container1{
+    width: 480px;
+    overflow:scroll;
+    display:block;
+    height: 480px;
+}
+#glass{
+}
+
+</style>
+
+
+
+    <body onload="InitSlides()">
+        <nav class="navbar navbar-inverse">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar">1</span>
+                <span class="icon-bar">2</span>
+                <span class="icon-bar">3</span>
+              </button>
+              <a class="navbar-brand" href="/">EchoView</a>
+            </div>
+          </div>
+        </nav>
+
+<div class="container">
+
+    <div class="row" align="center">
+        <div class="col-md-5">
+          <a href="/"><button onclick="">Studies list</button></a>
+          <button onclick="ChangeSlide1(-1)">PREVIOUS</button>
+          <b id="counter1"></b>
+          <button onclick="ChangeSlide1(1)">NEXT</button>
+          <div class="container1" id="media1">
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+          <a href="/"><button onclick="">Studies list</button></a>
+          <button onclick="ChangeSlide2(-1)">PREVIOUS</button>
+          <b id="counter2"></b>
+          <button onclick="ChangeSlide2(1)">NEXT</button>
+          <div class="container1">
+            <p id="media2"> </p>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+
+    </div>
+
+    <div class="row" align="center">
+        <div class="col-md-5">
+          <a href="/"><button onclick="">Studies list</button></a>
+          <button onclick="ChangeSlide3(-1)">PREVIOUS</button>
+          <b id="counter3"></b>
+          <button onclick="ChangeSlide3(1)">NEXT</button>
+          <div class="container1">
+            <p id="mediaaaa">hhh</p>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+          <a href="/"><button onclick="">Studies list</button></a>
+          <button onclick="ChangeSlide4(-1)">PREVIOUS</button>
+          <b id="counter4"></b>
+          <button onclick="ChangeSlide4(1)">NEXT</button>
+          <div class="container1" id="media4"> 
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+
+    </div>
+
+<div class="row">
+    <button onclick="Synchronize()">Synchronize</button>
+<p id="rates"></p>
+</div>
+
+
+<div class="row">
+    (c) Artemiy Okhotin, 2016
+</div>
+</div>
+<script>
+var pictures = new Array();
+var num=0;
+var numm=0;
+var num3=0;
+var num4=0;
+
+{% for m in media %}
+    {% if m.modality=='video' %}
+        pictures.push('<video class="MySlides" id="video{{ m.num }}" loop=true autoplay=true>\
+        <source src="{{ m.path }}" type="video/mp4"></video>');
+    {% endif %}
+    {% if m.modality=='image' %}
+        pictures.push('<img class="MySlides" id="media{{ m.num }}" src="{{ m.path }}">');
+    {% endif %}
+{% endfor %}
+
+
+
+
+function ChangeSlide1(n=0) {
+num=num+pictures.length+n;
+num=num%pictures.length;
+document.getElementById('media1').innerHTML=pictures[num];
+document.getElementById('counter1').innerHTML=' [ '+String(num)+' of ' + String(pictures.length)+' ] ';
+};
+function ChangeSlide2(n=0) {
+numm=numm+pictures.length+n;
+numm=numm%pictures.length;
+document.getElementById('media2').innerHTML=pictures[numm];
+document.getElementById('counter2').innerHTML=' [ '+String(numm)+' of ' + String(pictures.length)+' ] ';
+};
+
+function ChangeSlide3(n=0) {
+num3=num3+pictures.length+n;
+num3=num3%pictures.length;
+document.getElementById('mediaaaa').innerHTML=pictures[num3];
+document.getElementById('counter3').innerHTML=' [ '+String(num3)+' of ' + String(pictures.length)+' ] ';
+};
+function ChangeSlide4(n=0) {
+num4=num4+pictures.length+n;
+num4=num4%pictures.length;
+var media=document.getElementById('media4');
+var t=media.scrollTop;
+var l=media.scrollLeft;
+media.innerHTML=pictures[num4];
+media.style.marginLeft=-l;
+media.scrollTop=t;
+
+document.getElementById("rates").innerHTML=t+', '+l;
+
+document.getElementById('counter4').innerHTML=' [ '+String(num4)+' of ' + String(pictures.length)+' ] ';
+}
+
+function Synchronize() {
+
+vidI = document.getElementById("video"+String(num+1));
+vidII = document.getElementById("video"+String(numm+1));
+vidIII = document.getElementById("video"+String(num3+1));
+vidIV = document.getElementById("video"+String(num4+1));
+
+vidI.playbackRate = 0.5 * vidI.duration;
+vidII.playbackRate = 0.5 * vidII.duration;
+vidIII.playbackRate = 0.5 * vidIII.duration;
+vidIV.playbackRate = 0.5 * vidIV.duration;
+
+
+vidI.currentTime = 0;
+vidII.currentTime = 0;
+vidIII.currentTime = 0;
+vidIV.currentTime = 0;
+
+document.getElementById("rates").innerHTML= vidI.defaultPlaybackRate;
+
+};
+
+
+function InitSlides() {
+ChangeSlide1(2);
+ChangeSlide2(2);
+ChangeSlide3(2);
+ChangeSlide4(2);
+
+};
+
+
+</script>
+
+    </body>
+</html>

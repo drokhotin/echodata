@@ -1,0 +1,43 @@
+{% extends "basic-0.html" %}
+{% set active_page = "ward" %}
+
+{% block title %}Эходата 3.0: госпитализировать{% endblock %}
+{% block head %}
+
+{% endblock %}
+{% block content %}
+
+
+
+<form method="post" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
+
+    <h2>Поместить в клинику</h2>
+    <p>Пациент: {{ patient.surname }} {{ patient.name }} {{ patient.fathername }}</p>
+
+    <select name="ward"  class="w3-select">
+        {% for ward in wards %}
+            <option value={{ ward.id }}>
+                {{ ward.title }}
+            </option>
+        {% endfor %}
+    </select>
+    <label>Отделение</label>
+
+
+
+
+
+    <p>
+    {{ dateform | replace('input', 'input class="w3-input w3-border"')|safe }}
+    </p>
+    <p>
+    {{ timeform | replace('input', 'input class="w3-input w3-border"')|safe }}
+    </p>
+
+    <input type=submit value=Отправить class="w3-button w3-green"></p>
+
+</form>
+
+
+{% endblock %}
+

@@ -1,0 +1,59 @@
+{% extends "basic-3b.html" %}
+{% set active_page = "rrr" %}
+
+{% block title %}Эходата 3.0: список пациентов{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block index %}
+
+  <form id='schema' method="post" class="w3-container w3-card-4 w3-light-grey w3-text-green w3-margin">
+<h2 class="w3-center">Поиск</h2>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <textarea class="w3-input w3-border" name=jsonschema rows=15 placeholder="JSON schema">{{ jsonschema }}</textarea>
+    </div>
+</div>
+
+
+<button class="w3-button w3-block w3-section w3-green w3-ripple w3-padding">Показать</button>
+
+</form>
+
+
+{% endblock %}
+
+
+{% block content %}
+
+  <h1>Getting started with JSON Form</h1>
+  <form id='f1' class="w3-container w3-card-4 w3-light-grey w3-text-green w3-margin" method="post">
+
+
+  </form>
+  <div id="res" class="alert"></div>
+  <div id="json" class="json">{{ jsontext }}</div>
+
+  Request text
+
+  {{ requesttext }}
+
+  <script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/deps/jquery.min.js"></script>
+  <script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/deps/underscore.js"></script>
+  <script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/deps/opt/jsv.js"></script>
+  <script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/lib/jsonform.js"></script>
+  <script type="text/javascript" src="/static/scripts/jsonform-jsonform-1dd0395/deps/opt/jquery-ui.js"></script>
+
+  <script type="text/javascript">
+
+    $('#f1').jsonForm(   {{ jsonschema|safe }}  )
+
+  </script>
+
+
+{% endblock %}
+
+

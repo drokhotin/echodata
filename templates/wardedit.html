@@ -1,0 +1,45 @@
+{% extends "basic.html" %}
+{% set active_page = "ward" %}
+
+{% block title %}Эходата 3.0: установки отделения{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+<form method="post">
+
+
+    <p>Название (кратко):
+    <p><input type=text name=title value="{{ name }}" style="width:50%">
+    <p>Описание:
+    <p><textarea name=description style="height:20%;width:50%"></textarea>
+    <p>Шаблон:</p>
+    <select name=template>
+        {% for template in templates %}
+            <option value={{ template.id }}>
+                {{ template.title }}
+            </option>
+        {% endfor %}
+    </select>
+    <p>Ответственный врач:</p>
+    <select name=chief>
+        {% for doctor in doctors %}
+            <option value={{ doctor.id }}>
+                {{ doctor.surname }}
+                {{ doctor.name }}
+                {{ doctor.fathername }}
+            </option>
+        {% endfor %}
+    </select>
+    <p>Структура (каждая палата отдельной строкой в формате: "ПАЛАТА КОЙКА1 КОЙКА2 КОЙКА3", койки можно не указывать):
+    <p><textarea name=locations style="height:20%;width:50%"></textarea>
+    <p><input type=submit value=Отправить></p>
+
+</form>
+
+
+
+{% endblock %}
+

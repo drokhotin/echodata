@@ -1,0 +1,44 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: список шаблонов{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+
+<p><a class='w3-button w3-green' href="/newtemplate" target="right">Создать новый шаблон</a></p>
+
+<table class="w3-table w3-hoverable w3-striped">
+
+
+
+{% for template in templates %}
+
+    <tr onclick="document.getElementById('{{ template.id }}').click()">
+    <a href='{{ url_for('edittemplate', id=template.id) }}' id='{{ template.id }}' target='right'></a>
+        <td>
+            {{ template.title }}
+        </td>
+        <td>
+            {{ template.comment }}
+        </td>
+        <td>
+            {{ template.author.name }} {{ template.author.surname }}
+        </td>
+    </tr>
+
+{% endfor %}
+
+
+</table>
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+

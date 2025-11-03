@@ -1,0 +1,167 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0 {% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+
+<div class="w3-dropdown-click">
+  <span onclick="myFunction()" class="w3-black">Фильтр</span>
+<span id="Demo" class="w3-dropdown-content w3-bar-block w3-border">
+<div class="{{ 'w3-light-green' if '*' in sortsin else ('w3-red' if '*' in sortsout else 'w3-light-grey') }}"
+    onclick="sort('*')" id="all">&nbsp; * &nbsp;</div>
+
+{% for sort in sorts %}
+  <div class="{{ 'w3-light-green' if sort.sort in sortsin else ('w3-red' if sort.sort in sortsout else 'w3-light-grey') }}"
+        onclick="sort('{{ sort.sort }}')" id="{{ sort.sort }}">&nbsp; {{ sort.sort }} &nbsp;</div>
+{% endfor %}
+
+
+  </span>
+
+
+
+
+</div>
+
+<script>
+function myFunction() {
+  var x = document.getElementById("Demo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else {
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+</script>
+
+
+
+
+
+<table class="w3-table w3-hoverable w3-striped w3-small" id="table">
+
+
+
+{% for record in records %}
+    <tr onclick="selectRow({{ record.id }}); this.classList.add('w3-teal');" id="rline{{ record.id }}" class="recordrow">
+        <td>
+            <a href="{{ url_for('record', rid=record.id) }}" id="a{{ record.id }}"  target='right'></a>
+            {{ '&#x1F4CE;'|safe if record.attachments|length > 0 }}{{ record.title }}
+        </td>
+        <td style="display:none;">
+            {{ record.sort }}
+        </td>
+        <td>
+            {{ record.recorddate|datetime('date') }}
+        </td>
+        <td>
+            {{ record.author.surname }} {{ record.author.name[0] }}.
+
+        </td>
+    </tr>
+
+{% endfor %}
+
+
+</table>
+
+
+<script>
+    var sortsin = ["{{ '", "'.join(sortsin) | safe }}"];
+    var sortsout = ["{{ '", "'.join(sortsout) |safe }}"];
+    var sortsall = [{% for sort in sorts %} "{{ sort.sort }}", {% endfor %} "*"];
+
+
+// Function to select row (add this.classList.add('w3-teal'); to call)
+    function selectRow(id) {
+        document.getElementById('a'+id).click(); 
+        const collection = document.getElementsByClassName('w3-teal');
+        for (let i = 0; i < collection.length; i++) {
+            collection[i].classList.remove('w3-teal')};
+        return(1);
+        }
+
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  table = document.getElementById("table");
+  tr = table.getElementsByTagName("tr");
+  if ((sortsin[0] == "") && (sortsin.length==1)) {
+      sortsin=sortsall;
+  }
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      txtValue = txtValue.trim();
+      if (sortsin.includes(txtValue)) {
+        tr[i].style.display = "";
+        document.getElementById(txtValue).className='w3-light-green';
+      } else {
+        tr[i].style.display = "none";
+      }
+
+      if (sortsout.includes(txtValue)) {
+        document.getElementById(txtValue).className='w3-red';
+      }
+
+    }
+  }
+
+}
+
+
+
+    function sort(s) {
+
+        if (sortsin.includes(s)) {
+            sortsout.push(s);
+            sortsin.splice(sortsin.indexOf(s), 1);
+        }
+        else if (sortsout.includes(s)) {
+            sortsout.splice(sortsout.indexOf(s), 1);
+            sortsin.push(s);
+
+            }
+        else {
+            sortsin.push(s);
+            }
+        var args='?sortsin='  + sortsin.join('|')+'&sortsout=' + sortsout.join('|');
+        if (s=='*') {
+            sw = sortsin;
+            sortsin = sortsout;
+            sortsout = sw;
+            }
+
+        filterTable();
+
+    }
+
+
+
+    document.onkeydown = function(e) {
+        if (e.ctrlKey && e.which == 80) {
+            e.preventDefault();
+            var doc=parent.document.getElementById('rightframe');
+            var innerDoc = doc.contentDocument || doc.contentWindow.document;
+            innerDoc.getElementById('print').click();
+            }
+    }
+
+filterTable();
+</script>
+
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+

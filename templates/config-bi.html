@@ -1,0 +1,55 @@
+{% extends "basic-2.html" %}
+{% set active_page = "config" %}
+
+{% block title %}Эходата 3.0{% endblock %}
+
+
+{% block top %}
+<div class="w3-container">
+
+</div>
+
+{% endblock %}
+
+{% block index %}
+  <table class='w3-table w3-striped'>
+      <tr>
+           <td>   <a href="{{ url_for('wardsconfig') }}" target="_top">Настройки отделений</a> </td>
+      </tr>
+      <tr>
+              <td> <a href="{{ url_for('userconfig') }}" target="_top">Настройки пользователя</a> </td>
+
+
+      </tr>
+
+      <tr>
+              <td> <a href="{{ url_for('templates') }}" target="right">Шаблоны (старые)</a> </td>
+
+
+      </tr>
+      <tr>
+              <td> <a href="{{ url_for('templateforms') }}" target="right">Формы (новые)</a> </td>
+
+
+      </tr>
+      <tr>
+              <td> <a href="{{ url_for('dicomconversion') }}" target="right">DICOM конвертер</a> </td>
+
+
+      </tr>
+
+
+
+  </table>
+{% endblock %}
+
+{% block content %}
+  <iframe src="" id="rightframe" name="right" width=100% height=100%></iframe>
+{% endblock %}
+
+
+
+{% block footer %}
+{% endblock %}
+
+

@@ -1,0 +1,27 @@
+{% extends "basic.html" %}
+{% set active_page = "login" %}
+
+{% block title %}Эходата 3.0: вход{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+<div class="w3-container">
+<p>{{ message }}</p>
+<p>Для входа введите, пожалуйста, адрес электронной почты и пароль.</p>
+
+        <form method="post">
+            <p>Адрес электронный почты:<p><input type=text name=username value={{ email }}>
+            <p>Пароль: <p><input type=password name=password>
+            <p><input type=submit value='Войти'>
+            <input type="hidden" value="{{ nexturl }}" name=nexturl>
+        </form>
+
+<p>Если Вы еще не зарегистрировались, перейдите сюда: <a href={{ url_for('signup') }}>регистрация</a>.</p>
+<p>Если Вы забыли пароль, перейдите сюда: <a href={{ url_for('lostpassword') }}>восстановить пароль</a>.</p>
+
+</div>
+{% endblock %}
+

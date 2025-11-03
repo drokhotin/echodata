@@ -1,0 +1,75 @@
+{% extends "basic-0.html" %}
+{% set active_page = "ward" %}
+
+{% block title %}Эходата 3.0: установки отделения{% endblock %}
+{% block head %}
+
+{% endblock %}
+{% block content %}
+
+
+
+{% if ward is defined %}
+    {% set title=ward.title %}
+    {% set description = ward.description %}
+    {% set temaplateid = ward.template.id %}
+    {% set chiefid = chief %}
+    {% set locations = ward.locations %}
+    {% set active = ward.active %}
+{% else %}
+    {% set temaplateid = 0 %}
+    {% set chiefid = 0 %}
+{% endif %}
+
+{% if active == False %}
+<h2 class='w3-red'>Исследование удалено!</h2>
+
+{% endif %}
+
+<form method="post" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
+
+
+    <p><input type=text name=title value="{{ title }}"  class="w3-input w3-border">
+    <label>Название (кратко)</label>
+    <p><textarea name=description style="height:20%;" class="w3-input w3-border">
+        {{- description -}}
+    </textarea>
+    <label>Описание</label>
+
+    <select name=template  class="w3-select">
+        {% for template in templates %}
+            <option value={{ template.id }} {{ 'selected' if templateid == template.id }}>
+                {{ template.title }}
+            </option>
+        {% endfor %}
+    </select>
+    <label>Шаблон</label>
+
+    <select name=chief  class="w3-select">
+        {% for doctor in doctors %}
+            <option value={{ doctor.id }}  {{ 'selected' if chiefid == doctor.id }}>
+                {{ doctor.surname }}
+                {{ doctor.name }}
+                {{ doctor.fathername }}
+            </option>
+        {% endfor %}
+    </select>
+    <label>Ответственный врач</label>
+
+    <textarea name=locations style="height:20%;" class="w3-input w3-border">
+        {{- locations -}}
+    </textarea>
+    <label>Структура (каждая палата отдельной строкой в формате: "ПАЛАТА КОЙКА1 КОЙКА2 КОЙКА3", койки можно не указывать)</label>
+
+    <p><input type=submit value=Отправить class="w3-button w3-green">
+{% if ward is defined %}
+    <a href="{{ url_for('ward', wid=ward.id, kill=1) }}" id="kill"></a>
+    <input type=button value=Удалить class="w3-button w3-green" onclick='document.getElementById("kill").click()'>
+{% endif %}
+    </p>
+
+</form>
+
+
+{% endblock %}
+

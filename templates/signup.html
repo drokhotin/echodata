@@ -1,0 +1,50 @@
+{% extends "basic.html" %}
+{% set active_page = "profile" %}
+
+{% block title %}Эходата 3.0: добавление нового пользователя {% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+<script language="JavaScript" type="text/JavaScript">
+function validateForm() {
+    var x = document.forms["entrance"]["email"].value;
+    var atpos = x.indexOf("@");
+    var dotpos = x.lastIndexOf(".");
+    if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+        alert("Неправильный адрес электронной почты.");
+        return false;
+    }
+}
+</script>
+
+<h1>Эходата 3.0</h1>
+
+<h3>Регистрация нового пользователя </h3>
+<form name='entrance' onsubmit="return validateForm();" method="post">
+
+<p>Имя (можно указать только имя или имя и отчество): </p><p><input type='text' name='name'></p>
+<p>Фамилия: </p><p><input type='text' name='surname'></p>
+<p>Профессия: </p> <p><select name = 'profession'>
+    <option value="врач">врач</option>
+    <option value="медсестра">медсестра</option>
+    <option value="лаборант">лаборант</option>
+    <option value="другое">другое</option>
+</select></p>
+<p>Специальность: </p><p><input type='text' name='specialty'></p>
+<p>Подпись (как она будет выглядеть в консультациях): </p><textarea rows="4" cols="50" name='signature'></textarea>
+<p>Отделение: </p><p><input type='text' name='ward'></p>
+<p>Телефон: </p><p><input type='text' name='phone'></p>
+<p>E-mail (основной идентификатор): </p><p><input type='text' id='email' name='email'></p>
+<p>Пароль: </p><p><input type='password' id='password' name='password'></p>
+<p>Повторите пароль: </p><p><input type='password' id='password1' name='password1'></p>
+<p>Кодовое слово (можно узнать у администратора клиники): </p><p><input type='text' name='code'></p>
+<p>
+<input type='submit' value='Отправить'></th></tr></table></form>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

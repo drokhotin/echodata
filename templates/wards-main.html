@@ -1,0 +1,86 @@
+{% extends "basic-2.html" %}
+{% set active_page = "wards" %}
+
+{% block title %}Эходата 3.0{% endblock %}
+
+
+{% block top %}
+<div class="w3-container">
+
+
+<div class="w3-dropdown-click">
+  {% if ward!=None %}
+      <button onclick="selectWard('')" id="wardname" class="w3-button w3-green">{{ ward.title }} </button>
+  {% else %}
+      <button onclick="selectWard('')" id="wardname" class="w3-button w3-green"> Нет отделений </button>
+  {% endif %}
+  <div id="Demo" class="w3-dropdown-content w3-bar-block w3-border">
+  {% for w in wards %}
+    <a href="{{ url_for('wardpatients', wid=w.id) }}" class="w3-bar-item w3-button" target='left'
+        onclick="selectWard('{{ w.title }} ({{ w.id | numofpatients }})')">
+        {{ w.title }} ({{ w.id | numofpatients }})
+    </a>
+  {% endfor %}
+
+
+
+  </div>
+
+      <button type="button" onclick="printrx()" class="w3-button w3-green">Распечатать назначения </button>
+
+
+
+</div>
+
+<script>
+function selectWard(s='') {
+  var x = document.getElementById("Demo");
+  var y = document.getElementById("wardname");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else {
+    x.className = x.className.replace(" w3-show", "");
+  }
+  if (s!='') {
+      y.innerHTML=s;
+  }
+}
+
+
+function printrx() {
+    var doc=document.getElementById('leftframe');
+    var innerDoc = doc.contentDocument || doc.contentWindow.document;
+    innerDoc.getElementById('print').click();
+}
+
+
+document.onkeydown = function(e) {
+    if (e.ctrlKey && e.which == 80) {
+        e.preventDefault();
+        var doc=document.getElementById('rightframe');
+        var innerDoc = doc.contentDocument || doc.contentWindow.document;
+        innerDoc.getElementById('print').click();
+        }
+}
+
+</script>
+
+
+</div>
+
+{% endblock %}
+
+{% block index %}
+  <iframe src="{{ url_for('wardpatients', wid=ward.id) if ward!=None }}" id="leftframe" name="left" width=100% height=100%></iframe>
+{% endblock %}
+
+{% block content %}
+  <iframe src="{{ url_for('status', sid=status.id) if status!=None }}" id="rightframe" name="right" width=100% height=100%></iframe>
+{% endblock %}
+
+
+
+{% block footer %}
+{% endblock %}
+
+

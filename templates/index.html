@@ -1,0 +1,24 @@
+{% extends "basic.html" %}
+{% set active_page = "index" %}
+
+{% block title %}Основная страница{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+<h1>Эходата 3.0</h1>
+
+<p>Здравствуйте, {{ g.doctor.name + ' ' + g.doctor.surname }}!</p>
+
+Переход по разделам можно осуществлять с помощью навигационного меню наверху страницы или воспользоваться следующими ссылками:
+<p>
+<a href='/patients'>Пациенты</a>
+</p>
+
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

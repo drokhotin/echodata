@@ -1,0 +1,63 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0 {% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+
+
+
+<table class="w3-table w3-hoverable w3-striped w3-small">
+
+<tr>
+    <th>Отделение</th>
+    <th>Число пациентов</th>
+    <th>Врач</th>
+
+</tr>
+
+{% for ward in wards %}
+    {% if ward.ward.active %}
+    <tr onclick="getElementById('a{{ ward.ward.id }}').click()" id="rline{{ ward.ward.id }}" class="wardrow{{ ' w3-teal' if loop.index==1 }}">
+        <td>
+            <a href="{{ url_for('ward', wid=ward.ward.id) }}" id="a{{ ward.ward.id }}"  target='right'></a>
+            {{ ward.ward.title }}
+        </td>
+        <td>
+            {{ ward.ward.id | numofpatients }}
+        </td>
+        <td>
+            {{ ward.doctor.surname }} {{ ward.doctor.name }}
+
+        </td>
+    </tr>
+    {% endif %}
+
+{% endfor %}
+
+
+</table>
+
+<script>
+    document.onkeydown = function(e) {
+        if (e.ctrlKey && e.which == 80) {
+            e.preventDefault();
+            var doc=parent.document.getElementById('rightframe');
+            var innerDoc = doc.contentDocument || doc.contentWindow.document;
+            innerDoc.getElementById('print').click();
+            }
+    }
+</script>
+
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+

@@ -1,0 +1,55 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: список шаблонов{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+
+<p><a class='w3-button w3-green' href="/newtemplateform/0" target="right">Создать новый шаблон</a></p>
+
+<table class="w3-table w3-hoverable w3-striped">
+
+
+
+{% for templateform in templateforms %}
+
+    <tr  onclick="document.getElementById('{{ templateform.id }}').click()">
+    <a href='{{ url_for('newtemplateform', id=templateform.id) }}' id='{{ templateform.id }}' target='right'></a>
+        <td>
+            {{ templateform.id }}
+        </td>
+        <td>
+            {{ templateform.title }}
+        </td>
+        <td>
+            Версия {{ templateform.version }}
+        </td>
+        <td>
+            {{ templateform.comments }}
+        </td>
+        <td>
+            {{ templateform.author.name }} {{ templateform.author.surname }}
+        </td>
+        <td>
+            <a href="{{ url_for('uploaded_file', filename=templateform.xlsx_file, m='attach') }}"> 
+            {{ ''.join(templateform.xlsx_file.split('-')[4:]) }}</a>
+        </td>
+        
+    </tr>
+
+{% endfor %}
+
+
+</table>
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+

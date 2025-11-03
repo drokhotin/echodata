@@ -1,0 +1,49 @@
+{% extends "basic-0.html" %}
+{% set active_page = "profile" %}
+
+{% block title %}Эходата 3.0: профиль пользователя {% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+<script language="JavaScript" type="text/JavaScript">
+function validateForm() {
+    var x = document.forms["entrance"]["email"].value;
+    var atpos = x.indexOf("@");
+    var dotpos = x.lastIndexOf(".");
+    if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+        alert("Неправильный адрес электронной почты.");
+        return false;
+    }
+    if
+
+}
+</script>
+
+<form name='entrance' onsubmit="return validateForm();" method="post" class='w3-container w3-card'>
+
+<p>Имя (можно указать только имя или имя и отчество): </p><p><input type='text' name='name' value='{{ doc.name }}'></p>
+<p>Фамилия: </p><p><input type='text' name='surname' value='{{ doc.surname }}'></p>
+<p>Профессия: </p> <p><select name = 'profession'>
+    <option value="врач" {{ 'selected' if doc.profession=='врач' }}>врач</option>
+    <option value="медсестра" {{ 'selected' if doc.profession=='медсестра' }}>медсестра</option>
+    <option value="лаборант" {{ 'selected' if doc.profession=='лаборант' }}>лаборант</option>
+    <option value="другое" {{ 'selected' if doc.profession=='другое' }}>другое</option>
+</select></p>
+<p>Специальность: </p><p><input type='text' name='specialty' value='{{ doc.specialty }}'></p>
+<p>Подпись (как она будет выглядеть в консультациях): </p><textarea rows="4" cols="50" name='signature'>{{ doc.signature|safe }}</textarea>
+<p>Отделение: </p><p><input type='text' name='ward' value='{{ doc.ward }}'></p>
+<p>Телефон: </p><p><input type='text' name='phone' value='{{ doc.phone }}'></p>
+<p>E-mail (основной идентификатор): </p><p><input type='text' id='email' name='email' value='{{ doc.email }}'></p>
+<p>Старый пароль: </p><p><input type='password' id='oldpassword' name='oldpassword'></p>
+<p>Новый пароль (только если хотите изменить): </p><p><input type='password' id='password' name='password'></p>
+<p>Повторите новый пароль (только если хотите изменить): </p><p><input type='password' id='password1' name='password1'></p>
+<p>
+<input type='submit' value='Сохранить'></th></tr></table></form>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

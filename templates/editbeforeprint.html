@@ -1,0 +1,89 @@
+{% extends "basic-0.html" %}
+
+{% block title %} {% endblock %}
+
+{% block body_attrs %}
+{% if mode=='print' %}
+    onload="window.print()" onfocus="window.close()"
+{% endif %}
+{% endblock %}
+
+{% block style %}
+<style>
+
+
+
+
+
+table.report-container {
+    page-break-after:always;
+}
+thead.report-header {
+    display:table-header-group;
+}
+tfoot.report-footer {
+    display:table-footer-group;
+
+}
+
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+<div class="w3-contatiner">
+<form method="post" target="_blank" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
+<table class="report-container" style='width:100%;'>
+   <thead class="report-header">
+     <tr>
+        <th class="report-header-cell">
+           <div class="header-info">
+            {{ "<textarea name='header' style='height:10%;' class='w3-input w3-border'>"|safe if mode!='print' }}
+                {{ header|safe }}
+            {{ "</textarea>"|safe if mode!='print' }}
+           </div>
+         </th>
+      </tr>
+    </thead>
+    <tbody class="report-content">
+      <tr>
+         <td class="report-content-cell">
+            <div class="main">
+            {{ "<textarea style='height:70%;' name='html' class='w3-input w3-border'>"|safe if mode!='print' }}
+                {{ html|safe }}
+            {{ "</textarea>"|safe if mode!='print' }}
+            </div>
+          </td>
+       </tr>
+     </tbody>
+    <tfoot class="report-footer">
+      <tr>
+         <td class="report-footer-cell">
+           <div class="footer-info">
+           <hr>
+            {{ "<textarea name='footer' style='height:10%;' class='w3-input w3-border'>"|safe if mode!='print' }}
+                {{ footer|safe }}
+            {{ "</textarea>"|safe if mode!='print' }}
+           </div>
+          </td>
+      </tr>
+    </tfoot>
+
+</table>
+<input type="hidden" name="mode" value="print">
+<button type="submit">Печать</button>
+</form>
+</div>
+{% if mode=='print' %}
+<script>
+window.print();
+ setTimeout(window.close, 0);
+</script>
+{% endif %}
+
+
+{% endblock %}
+
+
+

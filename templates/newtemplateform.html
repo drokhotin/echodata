@@ -1,0 +1,62 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: создать новый шаблон формы{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+
+
+<form method="post" class="w3-container w3-card w3-light-grey w3-text-green w3-margin" enctype="multipart/form-data">
+    <h2>Новый шаблон</h2>
+
+
+
+    <input class="w3-input" type=text name="title"   oninput="notSaved()" id="title" value="{{ templateform.title }}">
+    <label class="w3-label">Название</label>
+
+    <input class="w3-input" type=text name="description"   oninput="notSaved()" value = "{{ templateform.description }}">
+    <label class="w3-label">Описание</label>
+
+    
+    <p><input class="w3-input" type=text name=sort   oninput="notSaved()" id=sort value = "{{ templateform.sort }}">
+    <label class="w3-label">Тип шаблона (исследование, дневник, консультация, анализ, другое)</label>
+
+    <p><input class="w3-input" type=text name=comments   oninput="notSaved()" id="comments" value = "{{ templateform.comments }}">
+    <label class="w3-label">Комментарий</label>
+
+    <p> {% if templateform.xlsx_file %} 
+        <a href="{{ url_for('uploaded_file', filename=templateform.xlsx_file, m='attach') }}"> 
+            {{ ''.join(templateform.xlsx_file.split('-')[4:]) }}</a>
+         {% endif %}
+        <input class="w3-input" type=file name=file   oninput="notSaved()" id=file accept=".xlsx">
+    <label class="w3-label">Файл .xlsx</label>
+
+
+    <p><input class="w3-input" type=hidden name=id value="{{ templateform.id }}">
+    <p id=saved></p>
+    <p><input class="w3-button w3-green" type=submit value=Сохранить></p>
+
+
+</form>
+
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+
+
+</div></main>
+
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  </body>
+</html>

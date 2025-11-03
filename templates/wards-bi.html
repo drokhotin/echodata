@@ -1,0 +1,27 @@
+{% extends "basic-2.html" %}
+{% set active_page = "wards" %}
+
+{% block title %}Эходата 3.0{% endblock %}
+
+
+{% block top %}
+<div class="w3-container">
+
+</div>
+
+{% endblock %}
+
+{% block index %}
+  <iframe src="{{ url_for('wardslist') }}" id="leftframe" name="left" width=100% height=100%></iframe>
+{% endblock %}
+
+{% block content %}
+  <iframe src="{{ url_for('ward', wid=wards[0].id) if wards|length>0 }}" id="rightframe" name="right" width=100% height=100%></iframe>
+{% endblock %}
+
+
+
+{% block footer %}
+{% endblock %}
+
+

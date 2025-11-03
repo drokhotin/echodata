@@ -1,0 +1,339 @@
+{% extends "basic-0.html" %}
+
+{% block title %} {% endblock %}
+
+{% block body_attrs %}onload="reloadleft()"{% endblock %}
+
+{% block style %}
+<style>
+
+
+
+      /* Base styles */
+        body {
+         /*   font-family: 'Georgia', serif; */
+            line-height: 1.6;
+            color: #333;
+            /*max-width: 8.5in;*/
+            margin: 0 auto;
+            padding: 0.25in;
+            background-color: white;
+            font-size: 13pt;
+        }
+        
+        /* Section titles */
+        h1 {
+            font-size: 1.3em;
+            line-height: 1.6;
+            padding-bottom: 0;
+            page-break-after: avoid;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+    
+        h2 {
+            font-size: 1.4em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.3em;
+            margin: 0 0 1em 0;
+            page-break-after: avoid;
+        }
+        h1 + h2 {
+            margin-top: 0.4em;   /* special rule when h2 follows h1 */
+           }
+        
+        /* Two column layout */
+        .two-columns {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5em;
+            page-break-inside: avoid;
+        }
+        
+        .column-left {
+            width: 58%; /* Slightly less than 60% to account for spacing */
+        }
+        
+        .column-right {
+            width: 40%;
+        }
+        
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: auto;
+            margin-bottom: 1em;
+        }
+        
+        th, td {
+            padding: 0.4em;
+            text-align: left;
+            vertical-align: top;
+            border: none;
+            font-size: 12pt;
+        }
+        
+        /* Header row styling */
+        th {
+            border-bottom: 1px solid #ddd;
+        }
+        
+        /* Zebra striping for rows */
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* no breaking cells */
+        .no-break-cell {
+            white-space: nowrap;
+        
+        }
+        
+        /* Column span styling */
+        .colspan-all {
+            font-style: italic;
+            border-top: 1px solid #ddd;
+            padding-top: 0.6em;
+        }
+        
+        /* Description styling */
+        .description {
+            margin-bottom: 1.5em;
+            font-size: 14pt;
+        }
+        .columns {
+            margin-bottom: 1.5em;
+            font-size: 12pt;
+        }
+        thead.report-header th {
+    padding-bottom: 1em;   /* adjust as needed */
+}
+        /* Print-specific styles */
+        @media print {
+            body {
+                font-family: 'Georgia', serif; 
+
+                padding: 0.3in;
+                margin: 0;
+                font-size: 12pt;
+                line-height: 1.2;
+            }
+            
+            h2 {
+                font-size: 1.1em;
+                border-bottom: 1px solid #999;
+                margin-top: 0 em;
+            }
+            h3 {
+                font-size: 1.1em;
+                border-bottom: 1px solid #999;
+            }
+            h1 + h2 {
+                margin-top: 0em;   /* special rule when h2 follows h1 */
+            }
+
+            .two-columns {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 1.5em;
+                page-break-inside: avoid;
+            }
+            
+            /* Avoid breaking inside important elements */
+            table, .description {
+                page-break-inside: avoid;
+                font-size: 11pt;
+            }
+            
+            th, td {
+                padding: 0.3em;
+                font-size: 10pt;
+                border: none;
+            }
+            
+
+
+            
+            .description {
+                font-size: 12pt;
+            }
+            .columns {
+                font-size: 10pt;
+            }
+            
+            
+            /* Remove backgrounds for printing */
+            tr:nth-child(even) {
+                background-color: transparent;
+            }
+            
+            /* Minimal borders for print */
+            th {
+                border-bottom: 1px solid #999;
+            }
+            
+            .colspan-all {
+                border-top: 1px solid #999;
+            }
+            
+            /* Ensure no colored backgrounds in print */
+            th, .colspan-2, .colspan-3 {
+                background-color: transparent !important;
+                -webkit-print-color-adjust: economy;
+                color-adjust: economy;
+            }
+            .noprint {
+                display: none !important;
+            }
+        }
+        
+        @media screen {
+            /* Screen-only styles */
+            .page {
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                padding: 0.5in;
+                margin: 20px auto;
+                background: white;
+            }
+            .scroll-box {
+               height: 85vh;         /* 85% of viewport height */
+               margin: auto;         /* center horizontally */
+               overflow-y: auto;     /* vertical scrolling */
+               overflow-x: hidden;   /* prevent sideways scroll */
+               border: 1px solid #333;
+               padding: 15px;
+               box-sizing: border-box;
+               background: #f8f8f8;
+            }
+            .print-only {
+                display: none !important;
+            }
+
+        }
+
+
+
+thead.report-header {
+    display:table-header-group;
+}
+tfoot.report-footer {
+    display:table-footer-group;
+
+}
+
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+<div class="scroll-box">
+<table class="report-container">
+   <thead class="report-header">
+     <tr  class="print-only">
+        <th class="report-header-cell" >
+           <div class="header-info">
+            {{ config.head|safe }}
+           </div>
+         
+            
+         </th>
+      </tr>
+    </thead>
+    <tfoot class="report-footer">
+      <tr>
+         <td class="report-footer-cell">
+           <div class="footer-info">
+           {{ config.footer|safe }}
+           </div>
+          </td>
+          
+      </tr>
+    </tfoot>
+    <tbody class="report-content">
+      <tr>
+         <td class="report-content-cell">
+            <div class="main">
+             {{ record.patient.surname }} {{ record.patient.name }} {{ record.patient.fathername }},
+             {{ record.patient.dob | datetime('age', relative=record.recorddate) }} 
+                <span class="report-content-cell" style="float:right;">
+             {{ record.title }}</span>
+            </div>
+         <div>
+         <span class="report-content-cell" style="float:right;">
+              Дата: {{ record.recorddate | datetime('datefull') }}</span>
+         </div></td>
+
+      </tr>
+                 <tr><td>
+                     <h1>{{ record.title | safe }}</h1>
+                 </td></tr>
+                 <tr><td>
+                     {{ record.html | safe }}
+                 </td></tr>
+     </tbody>
+</table>
+             </div>
+<button onclick="window.print()" class="w3-button w3-green noprint">Распечатать</button>                 
+<a href="{{ url_for('record', rid=record.id, n='new') }}" class="w3-button w3-green noprint">Редактировать</a>
+    {% if record.versions|length > 0 %}
+       <a class="w3-button w3-teal noprint" href={{ url_for('version', rid=record.id) }}>Версия:
+    {% else %}
+       <span class="noprint">Версия:
+    {% endif %}
+    {{ record.version }} (от {{ record.modified|datetime('medium') }}) {{ '</a>'|safe if record.versions|length > 0 else '</div>' | safe }}
+
+
+<script>
+
+function reloadleft(){
+    var leftframe = parent.document.getElementById('leftframe');
+    var innerDoc = leftframe.contentDocument || leftframe.contentWindow.document;
+    
+    if ({{ record.id }} != 0) {
+        var target = innerDoc.getElementById('rline{{ record.id }}');
+            if (target) { 
+                target.innerHTML = `<td>
+                   <a href="/record/{{ record.id }}" id="a{{ record.id }}"  target='right'></a>
+                     {{ record.title }}
+                   </td>
+                   <td>
+                     {{ record.recorddate|datetime('date') }}
+                   </td>
+                   <td>
+                     {% if record.author is defined %}
+                     {{ record.author.surname }} {{ record.author.name[0] }}.
+                     {% endif %}
+                   </td>`;
+                setTimeout(function() {selectrow({{ record.id }});}, 
+                           500);
+                    }
+            else {
+                leftframe.contentWindow.location.reload();
+              }
+    }
+}
+
+    function selectrow(rid) {
+        var leftframe = parent.document.getElementById('leftframe');
+        var innerDoc = leftframe.contentDocument || leftframe.contentWindow.document;
+        var button = document.getElementById('bubb');
+        rows=innerDoc.getElementsByClassName('recordrow');
+
+        for (i = 0; i < rows.length; i++) {
+          rows[i].className = "recordrow";
+          if (rows[i].id=="rline"+rid) {
+              rows[i].className = "recordrow w3-teal";
+          }
+          }
+    }
+
+    </script>
+
+
+{% endblock %}
+
+
+

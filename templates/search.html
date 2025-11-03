@@ -1,0 +1,212 @@
+{%- if csvs!="on" -%}
+{% extends "basic-2.html" %}
+{% set active_page = "search" %}
+
+{% block title %}Эходата 3.0: список пациентов{% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+
+
+
+
+{% block index %}
+
+
+
+<form method="post" class="w3-container w3-card-4 w3-light-grey w3-text-green w3-margin">
+<h2 class="w3-center">Поиск</h2>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <input class="w3-input w3-border" name="surname" type="text" placeholder="Фамилия" value="{{ surname }}">
+    </div>
+</div>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <input class="w3-input w3-border" name="name" type="text" placeholder="Имя" value="{{ name }}">
+    </div>
+</div>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <input class="w3-input w3-border" name="fathername" type="text" placeholder="Отчество" value="{{ fathername }}">
+    </div>
+</div>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <input class="w3-input w3-border" name="words" type="text" placeholder="Ключевые слова (через &)" value="{{ words }}">
+    </div>
+</div>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <input class="w3-input w3-border" name="nowords" type="text" placeholder="Не содержит слов (через &)" value="{{ nowords }}">
+    </div>
+</div>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      <input class="w3-input w3-border" name="sort" type="text" placeholder="Тип записи" value="{{ sort }}">
+    </div>
+</div>
+
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      После: <input class="w3-input w3-border" name="after" type="date" placeholder="После:" value='1900-01-01'>
+    </div>
+</div>
+
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    <div class="w3-rest">
+      До: <input class="w3-input w3-border" name="before" type="date" placeholder="До:" value='2100-01-01'>
+    </div>
+</div>
+
+<div class="w3-row w3-section">
+  <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
+    
+      <label> <input  name="recs" value=1 type="checkbox" {{ "checked" if recs == "1" }}> записи </label>
+      <label> <input  name="csvs" value="on" type="checkbox" {{ "checked" if csvs == "on" }}> CSV </label>
+    |{{ csvs }}|
+</div>
+
+
+
+<button class="w3-button w3-block w3-section w3-green w3-ripple w3-padding">Найти</button>
+
+</form>
+
+<div class="w3-container">
+</div>
+
+{% if recs == "1" %}
+
+
+<table class="w3-table w3-striped w3-hoverable w3-small">
+
+    <tr>
+        <th>
+            Фамилия, имя, отчество
+        </th>
+        <th>
+            Запись
+        </th>
+        <th>
+            Дата
+        </th>
+    </tr>
+
+
+
+{% for record in records|sort(attribute='recorddate') %}
+    <tr onclick="getElementById('{{ record.id }}').click()" oncontextmenu='getElementById("pat"+{{ record.id }}).click()'>   
+    <a href="/record/{{ record.id }}" id="{{ record.id }}" target="right"></a>
+    <a href="/patient/{{ record.patient.id }}" id="pat{{ record.id }}" target="_blank"></a>
+
+
+
+        <td>
+        {{ record.patient.surname }} {{ record.patient.name[0] }} {{ record.patient.fathername[0] }}
+        </td>
+        <td>
+            {{ record.title }}
+        </td>
+        <td>
+            {{ record.recorddate | datetime('date') }}
+        </td>
+
+    </tr>
+
+{% endfor %}
+
+
+
+
+</table>
+
+
+
+{% endif %}
+
+
+{% endblock %}
+
+
+{% block content %}
+
+
+{% if recs == "1" %}
+
+<iframe src="" name="right" width=100% height=100%></iframe>
+
+{% else %}
+
+
+<div class="w3-container">
+
+
+Всего записей: {{records | length }}
+
+<table class="w3-table w3-striped w3-hoverable">
+
+    <tr>
+        <th>
+            Фамилия, имя, отчество ({{ patients | length }})
+        </th>
+        <th>
+            Возраст
+        </th>
+        <th>
+            Дата рождения
+        </th>
+    </tr>
+
+
+
+{% for patient in patients %}
+    <tr onclick='window.location.href="/patient/{{ patient.id }}"' 
+        oncontextmenu='getElementById("pat"+{{ patient.id }}).click()'> 
+    <a href="/patient/{{ patient.id }}" id="pat{{ patient.id }}" target="_blank"></a>
+
+        <td>
+            {{ patient.surname }} {{ patient.name }} {{ patient.fathername }}
+                     ( {{ patient.records | length }} )
+        </td>
+        <td>
+            {{ patient.dob|datetime('age') }}
+        </td>
+        <td>
+            {{ patient.dob|datetime('date') }}
+        </td>
+
+    </tr>
+
+{% endfor %}
+
+
+
+
+</table>
+</div>
+
+{% endif %}
+
+{% endblock %}
+{%- endif -%}
+{%- if csvs=="on" -%}{% for record in records|sort(attribute='recorddate') %}
+"{{ record.patient.surname }} {{ record.patient.name[0] }} {{ record.patient.fathername[0] }}","{{ record.title }}","{{ record.recorddate | datetime('date') }}","{{ record.id }}"{% endfor %}
+{% endif %}

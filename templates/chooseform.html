@@ -1,0 +1,50 @@
+{% extends "basic-0.html" %}
+{% set active_page = "cmes" %}
+
+{% block title %}Эходата 3.0: {{ patient.surname }} {{ patient.name }} {{ patient.fathername }} {% endblock %}
+{% block head %}
+    {{ super() }}
+
+{% endblock %}
+{% block content %}
+
+<h3>Выберите бланк:</h3>
+
+<table class="w3-table w3-striped w3-hoverable">
+  <tr>
+        <th>
+            Название шаблона
+        </th>
+        <th>
+            Тип записи
+        </th>
+ </tr>
+
+
+
+{% for template in templates %}
+    <tr onclick="window.location.href='{{ url_for('fillform', tid=template.id, pid=patient.id) }}'">
+        <td>
+            {{ template.title }}
+        </td>
+        <td>
+            {{ template.sort }}
+        </td>
+
+    </tr>
+
+{% endfor %}
+
+
+</table>
+
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+
+
+

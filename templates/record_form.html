@@ -1,0 +1,457 @@
+{% extends "basic-0.html" %}
+
+{% block title %}Эходата 3.0: {{ record.title }} ({{ patient.surname }}) {% endblock %}
+{% block body_attrs %} onload="reloadleft();" {% endblock %}
+
+{% block style %}
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 80px 60px 120px;
+            gap: 12px;
+            align-items: center;
+        }
+        .form-row {
+            display: contents;
+        }
+        .input-container {
+            position: relative;
+        }
+        .form-input {
+            width: 100%;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .form-header {
+            grid-column: 1 / -1;
+            border-bottom: 1px solid #eee;
+        }
+        .text-input-full {
+            grid-column: 2 / span 3;
+        }
+        .text-input-full .form-input {
+            text-align: left;
+        }
+        .text-area-full {
+            grid-column: 1 / span 4;
+        }
+        .text-area-full .form-input {
+            text-align: left;
+        }
+        .buttons {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .btn {
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .tabs { 
+            display: flex; 
+            margin-bottom: 10px; 
+            flex-wrap: wrap; 
+        }
+        .tab-button { 
+            cursor: pointer; 
+            border: 1px solid #ccc; 
+            margin-right: 5px; 
+        }
+        .tab-button.active { 
+            border-bottom: 1px solid #fff; 
+        }
+        .tab-content { 
+            display: none; 
+            border: 1px solid #ccc; 
+        }
+        .tab-content.active { 
+            display: block; 
+        }
+        .tab-overflow {
+            height:85%; 
+            overflow:auto;
+        }
+        .column-overflow {
+            height:98%; 
+            overflow:auto;
+        }
+
+
+.rte {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden; /* keeps toolbar + editor together */
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem;
+  background: #f1f1f1;
+  border-bottom: 1px solid #ccc;
+  padding: .3rem;
+}
+
+.toolbar button {
+  border: none;
+  background: #f1f1f1;
+  cursor: pointer;
+}
+
+.toolbar button:hover {
+  background: #ddd;
+}
+
+.editor {
+  min-height: 150px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: .6rem;
+  line-height: 1.5;
+  background: #fff;
+}        
+        .editor:empty:before{content:attr(data-placeholder);color:#888}
+        .editor img{max-width:100%;height:auto;display:block;margin:.5rem 0}
+        .editor ul, .editor ol {
+             margin: .5em 0;
+             padding-left: 1em;
+             list-style-position: inside;
+             }
+        textarea.form-input {
+		    text-align: left;
+			font-size: 16px;
+			height: 200px;
+		}
+        
+.w3-col-bottom {
+  display: flex;
+  align-items: flex-end;   /* push children to bottom */
+  gap: 8px;                /* keep spacing */
+}
+ 
+       /* Chrome, Safari, Edge, Opera */
+       input::-webkit-outer-spin-button,
+       input::-webkit-inner-spin-button {
+       -webkit-appearance: none;
+       margin: 0;
+       }
+
+       /* Firefox */
+       input[type=number] {
+       -moz-appearance: textfield;
+       }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .form-label, .input-container, .form-unit, .form-reference {
+                grid-column: 1;
+            }
+            .form-header {
+                margin-top: 30px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block script %}
+<script src="/static/dist/purify.min.js"></script>
+{% endblock %}
+
+{% block content %}
+            
+            <form method="post" id="myForm" onsubmit="return logicUpdate();" novalidate>
+                <div class = "w3-container w3-card w3-light-grey w3-text-black w3-text-small">
+
+            {{ patient.name }} {{ patient.surname }},  {{ patient.dob | datetime('age') }} ({{ patient.dob | datetime('datefull') }})
+                    
+
+            <input type="hidden" id = "_AGE" name="_AGE" value="{{ (patient.dob | datetime('age')).split(' ')[0] }}">
+                    
+            <input type="text" name="_title" value="{{ record.title }}">
+            <input type="text" name="_sort" value="{{ record.sort }}">
+            <input type="date" name="_date" value="{{ record.recorddate.strftime('%Y-%m-%d') }}">
+            <input type="time" name="_time" value="{{ record.recorddate.strftime('%H:%M') }}">
+            <input type="hidden" name="_templateform_id" value="{{ echo._templateform_id }}">
+
+            {% block parameters %}
+            {% endblock %}
+            
+                </div>
+                <button class="w3-bar-item w3-button w3-green"  type="submit" id="print"
+                     formaction="?n=old"
+                     formmethod="post"
+                     >Отправить
+                </button>
+                <button class = "w3-bar-item w3-button  w3-blue" type="submit" id="save">Сохранить данные</button>
+         </form>
+
+<script>
+
+
+function reloadleft(){
+    var leftframe = parent.document.getElementById('leftframe');
+    var innerDoc = leftframe.contentDocument || leftframe.contentWindow.document;
+    
+    if ({{ record.id }} != 0) {
+        var target = innerDoc.getElementById('rline{{ record.id }}');
+            if (target) { 
+                target.innerHTML = `<td>
+                   <a href="/record/{{ record.id }}" id="a{{ record.id }}"  target='right'></a>
+                     {{ record.title }}
+                   </td>
+                   <td>
+                     {{ record.recorddate|datetime('date') }}
+                   </td>
+                   <td>
+                     {% if record.author is defined %}
+                     {{ record.author.surname }} {{ record.author.name[0] }}.
+                     {% endif %}
+                   </td>`;
+                setTimeout(function() {selectrow({{ record.id }});}, 
+                           500);
+                    }
+            else {
+                leftframe.contentWindow.location.reload();
+              }
+    }
+}
+
+    function selectrow(rid) {
+        var leftframe = parent.document.getElementById('leftframe');
+        var innerDoc = leftframe.contentDocument || leftframe.contentWindow.document;
+        var button = document.getElementById('bubb');
+        rows=innerDoc.getElementsByClassName('recordrow');
+
+        for (i = 0; i < rows.length; i++) {
+          rows[i].className = "recordrow";
+          if (rows[i].id=="rline"+rid) {
+              rows[i].className = "recordrow w3-teal";
+          }
+          }
+    }
+
+ 
+    
+    
+
+document.onkeydown = function(e) {
+   if ((e.ctrlKey || e.metaKey) && e.which == 80) {
+       e.preventDefault();
+       document.getElementById('print').click();
+       }
+   else if ((e.ctrlKey || e.metaKey) && e.which == 83) {
+       e.preventDefault();
+       document.getElementById('save').click();
+       }
+    }
+
+
+    
+      function showhide(id) {
+        element=document.getElementById(id);
+        sign=document.getElementById(id+'-sign');
+        if (element.style.display=="none") {
+            element.style.display="block";
+            sign.innerHTML="&#9207;"
+        }
+        else {
+            element.style.display="none";
+            sign.innerHTML="&#9205;"
+        }
+
+    };
+
+        // Add slight animation to input focus
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+       
+        // Add animation when over sentence to click
+        document.querySelectorAll('.text-area-sentence').forEach(label => {
+            label.addEventListener('mouseover', function() {
+               this.style.backgroundColor = '#d3d3d3'; // Darker gray
+            });
+    
+            label.addEventListener('mouseout', function() {
+               this.style.backgroundColor = '';
+            });
+        });
+    
+// Tabs toggling function
+function openTab(evt, tabName) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("tab-content");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" w3-blue", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " w3-blue";
+};
+    
+function toNum(v=NaN) {
+     const n = Number(v);
+     return Number.isFinite(n) ? n : NaN;
+     }
+
+    
+function roundToStep(value, step) {
+  if (!Number.isFinite(value) || !Number.isFinite(step) || step <= 0) return NaN;
+  // Determine how many decimal places step has
+  const stepStr = step.toString();
+  const decimals = (stepStr.split('.')[1] || '').length;
+  const factor = Math.pow(10, decimals);
+  // Scale both to integers if possible
+  const scaled = Math.round((value / step) * factor);
+  const result = (scaled / factor) * step;
+  // Normalize tiny FP errors (e.g., 1.2000000000000002)
+  return Number(result.toFixed(decimals));
+}
+
+function initRTE(container){
+  const name = container.dataset.name;
+
+  container.innerHTML = `
+    <div class="toolbar">
+      <button type="button" data-cmd="bold"><b>B</b></button>
+      <button type="button" data-cmd="italic"><i>I</i></button>
+      <button type="button" data-cmd="underline"><u>U</u></button>
+      <button type="button" data-cmd="insertUnorderedList">• List</button>
+      <button type="button" data-cmd="insertOrderedList">1. List</button>
+      <select class="fontSize">
+        <option value="3">Normal</option>
+        <option value="2">Small</option>
+        <option value="5">Large</option>
+      </select>
+      <select class="heading">
+        <option value="">Paragraph</option>
+        <option value="h1">H1</option>
+        <option value="h2">H2</option>
+      </select>
+      <button type="button" onclick="(u=prompt('URL'))&&document.execCommand('createLink',0,u)">Link</button>
+      <button type="button" class="imgBtn">Img</button>
+    </div>
+    <div id="${name}" class="editor" contenteditable="true" data-placeholder="Write here…">${container.innerHTML}</div>
+    <textarea name="${name}" hidden></textarea>
+    <textarea name="${name}_text" hidden></textarea>
+  `;
+
+  const editor = container.querySelector('.editor');
+  const htmlField = container.querySelector(`textarea[name="${name}"]`);
+  const textField = container.querySelector(`textarea[name="${name}_text"]`);
+  const fontSizeSel = container.querySelector('.fontSize');
+  const headingSel = container.querySelector('.heading');
+  const imgBtn = container.querySelector('.imgBtn');
+
+  // toolbar actions
+  container.querySelectorAll('[data-cmd]').forEach(b=>{
+    b.onmousedown=e=>{
+      e.preventDefault();
+      document.execCommand(b.dataset.cmd);
+      editor.focus();
+      sync();
+    };
+  });
+
+  // font size
+  fontSizeSel.onchange=()=>{document.execCommand('fontSize',false,fontSizeSel.value);editor.focus();sync();};
+
+  // heading
+  headingSel.onchange=()=>{
+    document.execCommand('formatBlock',false,headingSel.value||'p');
+    editor.focus();sync();
+  };
+
+  // image insert
+  imgBtn.onmousedown=e=>{
+    e.preventDefault();
+    const url=prompt("Enter image URL:");
+    if(url){
+      document.execCommand("insertImage",false,url);
+      editor.focus();sync();
+    }
+  };
+
+  // shortcuts
+  editor.onkeydown=e=>{
+    if((e.ctrlKey||e.metaKey)&&'biu'.includes(e.key.toLowerCase())){
+      e.preventDefault();
+      document.execCommand({b:'bold',i:'italic',u:'underline'}[e.key.toLowerCase()]);
+      sync();
+    }
+  };
+
+  // sync sanitized HTML + plain text
+  function sync(){
+    const clean = DOMPurify.sanitize(editor.innerHTML, {
+      ALLOWED_TAGS:['b','i','u','ul','ol','li','a','p','br','font','h1','h2','img'],
+      ALLOWED_ATTR:['href','target','rel','size','src','alt']
+    });
+    htmlField.value = clean;
+    textField.value = editor.textContent.trim();
+  }
+  editor.sync = sync;
+  editor.addEventListener('input',sync);
+  sync();
+}
+
+function appendRTE(rteId, sentenceId){
+  const editor = document.getElementById(rteId);
+  const sentence = document.getElementById(sentenceId);
+  if (!editor || !sentence) return;
+
+  // Trim leading/trailing spaces & <br> without losing HTML structure
+  editor.innerHTML = editor.innerHTML
+    .replace(/^[\s\n\r]+|[\s\n\r]+$/g, '')         // remove whitespace around
+    .replace(/^(<br\s*\/?>)+|(<br\s*\/?>)+$/gi, ''); // remove leading/trailing <br>
+
+  // Add space or line break depending on punctuation
+  const lastChar = editor.innerText.trim().slice(-1);
+  if (lastChar === ".") {
+    editor.appendChild(document.createElement("br"));
+  } else if (lastChar !== "" && lastChar !== " ") {
+    editor.appendChild(document.createTextNode(" "));
+  }
+    
+  editor.insertAdjacentHTML("beforeend", sentence.innerHTML);
+  if (typeof editor.sync === "function") editor.sync();
+}
+  
+document.querySelectorAll('.rte').forEach(initRTE);
+
+    {% block endscript %}
+    {% endblock %}
+    
+
+</script>
+{% endblock %}
+
+{% block footer %}
+Footer
+{% endblock %}

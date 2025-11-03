@@ -1,0 +1,67 @@
+{% extends "basic-0.html" %}
+
+{% block title %} {% endblock %}
+
+{% block body_attrs %} onLoad="functionprint()"{% endblock %}
+
+{% block style %}
+<style>
+
+
+
+
+
+table.report-container {
+    page-break-after:always;
+}
+thead.report-header {
+    display:table-header-group;
+}
+tfoot.report-footer {
+    display:table-footer-group;
+
+}
+
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+
+<table class="report-container">
+   <thead class="report-header">
+     <tr>
+        <th class="report-header-cell">
+           <div class="header-info">
+            {{ config.head|safe }}<hr>
+           </div>
+         </th>
+      </tr>
+    </thead>
+    <tfoot class="report-footer">
+      <tr>
+         <td class="report-footer-cell">
+           <div class="footer-info">
+           <hr>{{ config.footer|safe }}
+           </div>
+          </td>
+      </tr>
+    </tfoot>
+    <tbody class="report-content">
+      <tr>
+         <td class="report-content-cell">
+            <div class="main">
+             {{ record.html|safe }}
+            </div>
+          </td>
+       </tr>
+     </tbody>
+</table>
+
+
+
+{% endblock %}
+
+
+
