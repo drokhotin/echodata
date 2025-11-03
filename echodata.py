@@ -53,13 +53,15 @@ from dicomecho import *
 from form_from_xlsx import form_from_xlsx
 import io # for search and csv output
 
-from openai import OpenAI
-client = OpenAI()
 
 
 
 app = Flask(__name__) #, static_folder='static', static_url_path='')
 load_dotenv()
+
+from openai import OpenAI
+client = OpenAI()
+
 
 app.config["DEBUG"] = os.getenv("DEBUG", 'True').lower() == 'true'
 
