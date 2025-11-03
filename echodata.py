@@ -409,44 +409,6 @@ def admin_required(f):
 
 
 
-@app.route('/openai/<id>', methods=['GET', 'POST'])
-@login_required
-def openai(id):
-    if request.method == 'POST':
-        prompt = request.form['prompt']
-        records = Record.select().where(Record.patient==id).order_by(Record.recorddate.desc())
-        patient = Patient.get(Patient.id==id)
-        all_records = "\nСледующая запись\n".join([f"Дата {rec.recorddate}, {html2text.html2text(rec.html)}" for rec in records])
-        all_records = all_records.replace(patient.name, "ИМЯ_ПАЦИЕНТА").replace(patient.surname, "ФАМИЛИЯ_ПАЦИЕНТА")
-
-        response = client.chat.completions.create(
-            model="gpt-4.1-mini",  # or another current model
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "Ты помощник врача. "
-                        "Анализируй историю болезни пациента и давай осторожные, "
-                        "осмотрительные рекомендации. Никогда не ставь окончательный диагноз "
-                        "и не отменяй назначения врача."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        f"История болезни пациента:\n\n{all_records}\n\n"
-                        f"Вопрос врача:\n{prompt}"
-                    ),
-                },
-            ],
-        )
-
-        answer = response.choices[0].message.content
-        return render_template('openai.html', id=id, prompt=prompt, answer=answer, patient=patient)
-    patient = Patient.get(Patient.id==id)
-    return render_template('openai.html', id=id, patient=patient)
-
-
 @app.route('/dicom')
 def dicom():
     studies = get_studies(app.config['dicom_server'],
@@ -725,6 +687,46 @@ def index():
         return render_template('index.html', admin=(session['username'] in app.config["admins"]))
     else:
         return redirect(url_for('login', nexturl=request.url, error='Для доступа нужно войти в систему.'))
+
+
+
+@app.route('/openai/<id>', methods=['GET', 'POST'])
+@login_required
+def openai(id):
+    if request.method == 'POST':
+        prompt = request.form['prompt']
+        records = Record.select().where(Record.patient==id).order_by(Record.recorddate.desc())
+        patient = Patient.get(Patient.id==id)
+        all_records = "\nСледующая запись\n".join([f"Дата {rec.recorddate}, {html2text.html2text(rec.html)}" for rec in records])
+        all_records = all_records.replace(patient.name, "ИМЯ_ПАЦИЕНТА").replace(patient.surname, "ФАМИЛИЯ_ПАЦИЕНТА")
+
+        response = client.chat.completions.create(
+            model="gpt-4.1-mini",  # or another current model
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "Ты помощник врача. "
+                        "Анализируй историю болезни пациента и давай осторожные, "
+                        "осмотрительные рекомендации. Никогда не ставь окончательный диагноз "
+                        "и не отменяй назначения врача."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"История болезни пациента:\n\n{all_records}\n\n"
+                        f"Вопрос врача:\n{prompt}"
+                    ),
+                },
+            ],
+        )
+
+        answer = response.choices[0].message.content
+        return render_template('openai.html', id=id, prompt=prompt, answer=answer, patient=patient)
+    patient = Patient.get(Patient.id==id)
+    return render_template('openai.html', id=id, patient=patient)
+
 
 
 @app.route('/wards', methods=['GET', 'POST'])   # основная страница отделений (на входе отделение и пациент, не обязательно)
