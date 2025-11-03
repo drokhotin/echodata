@@ -540,6 +540,16 @@ def dicomconversion():
                 conf = Configs.get(Configs.label == 'dicom_conversion_table')
             except:
                 conf = Configs.create(author = g.doctor, label = 'dicom_conversion_table', data ="{}", date = dt.now(), version = 1)
+            if conf.data != "{}":
+                # remove previous uploaded xlsx if present
+                data = json.loads(conf.data)
+                old_filename = data.get('filename', '')
+                old_path = os.path.join(app.config['UPLOAD_FOLDER'], old_filename)
+                try:
+                    os.remove(old_path)
+                except OSError:
+                    app.logger.exception("Failed to remove old dicom conversion table: %s", old_path)
+            
             conf.data = json.dumps({"filename": filename})
             conf.date = dt.now()
             conf.version = conf.version+1
@@ -1515,14 +1525,12 @@ def newtemplateform(id=0):
             file_path= os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             if (modification):
-                file_path= os.path.join(app.config['UPLOAD_FOLDER'], template.xlsx_file)
                 # remove previous uploaded xlsx if present
                 old_path = os.path.join(app.config['UPLOAD_FOLDER'], template.xlsx_file)
-                if template.xlsx_file and os.path.exists(old_path):
-                    try:
-                        os.remove(old_path)
-                    except OSError:
-                        app.logger.exception("Failed to remove old xlsx file: %s", old_path)
+                try:
+                    os.remove(old_path)
+                except OSError:
+                    app.logger.exception("Failed to remove old xlsx file: %s", old_path)
             template.xlsx_file = filename
             template_form = form_from_xlsx(title='', header=template.title, 
                                                description=template.description, file_path=file_path)
@@ -2286,7 +2294,7 @@ def uploaded_file(filename):
         if len(splitfilename)>4: newfilename='-'.join(splitfilename[4:])
         else: newfilename=filename
         return send_from_directory(app.config['UPLOAD_FOLDER'],\
-            filename, as_attachment=True, attachment_filename=newfilename)
+            filename, as_attachment=True, download_name=newfilename)
     else:
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
