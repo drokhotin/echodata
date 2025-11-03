@@ -410,7 +410,7 @@ def admin_required(f):
 
 
 @app.route('/openai/<id>', methods=['GET', 'POST'])
-@admin_required
+@login_required
 def openai(id):
     if request.method == 'POST':
         prompt = request.form['prompt']
