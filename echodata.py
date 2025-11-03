@@ -53,6 +53,10 @@ from dicomecho import *
 from form_from_xlsx import form_from_xlsx
 import io # for search and csv output
 
+from openai import OpenAI
+client = OpenAI()
+
+
 
 app = Flask(__name__) #, static_folder='static', static_url_path='')
 load_dotenv()
@@ -402,15 +406,44 @@ def admin_required(f):
     return decorated_function
 
 
-@app.route('/testtemplate')
-def testtemplate(template=''):
-    return render_template("record_form.html",
-                          patient={},
-                          record={},
-                          script='script',
-                          parameters = 'parameters',
-                          style= 'style',
-                          recorddate='')
+
+@app.route('/openai/<id>', methods=['GET', 'POST'])
+@admin_required
+def openai(id):
+    if request.method == 'POST':
+        prompt = request.form['prompt']
+        records = Record.select().where(Record.patient==id).order_by(Record.recorddate.desc())
+        patient = Patient.get(Patient.id==id)
+        all_records = "\nСледующая запись\n".join([f"Дата {rec.recorddate}, {html2text.html2text(rec.html)}" for rec in records])
+        all_records = all_records.replace(patient.name, "ИМЯ_ПАЦИЕНТА").replace(patient.surname, "ФАМИЛИЯ_ПАЦИЕНТА")
+
+        response = client.chat.completions.create(
+            model="gpt-4.1-mini",  # or another current model
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "Ты помощник врача. "
+                        "Анализируй историю болезни пациента и давай осторожные, "
+                        "осмотрительные рекомендации. Никогда не ставь окончательный диагноз "
+                        "и не отменяй назначения врача."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"История болезни пациента:\n\n{all_records}\n\n"
+                        f"Вопрос врача:\n{prompt}"
+                    ),
+                },
+            ],
+        )
+
+        answer = response.choices[0].message.content
+        return render_template('openai.html', id=id, prompt=prompt, answer=answer, patient=patient)
+    patient = Patient.get(Patient.id==id)
+    return render_template('openai.html', id=id, patient=patient)
+
 
 @app.route('/dicom')
 def dicom():

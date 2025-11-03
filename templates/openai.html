@@ -1,0 +1,58 @@
+{% extends "basic-0.html" %}
+{% set active_page = "OpenAI" %}
+
+{% block title %}Эходата 3.0 {% endblock %}
+
+
+{% block style %}
+
+
+{% endblock %}
+{% block script %}
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="w3-container" style="max-width: 800px; margin-top: 30px;">
+
+  <h3 class="w3-text-teal">Задайте вопрос про пациента</h3>
+  <p><strong>{{ patient.surname }} {{ patient.name }} {{ patient.fathername }}</strong></p>
+
+  <form method="post" class="w3-section">
+    <label class="w3-text-grey"><b>Вопрос:</b></label>
+    <input 
+      class="w3-input w3-border w3-round-large"
+      type="text"
+      name="prompt"
+      placeholder="Введите вопрос..."
+      value="{{ prompt or '' }}"
+      required
+    >
+{% if answer %}
+    <label class="w3-text-grey w3-margin-top"><b>Ответ:</b></label>
+    <textarea 
+      class="w3-input w3-border w3-round-large"
+      name="answer"
+      rows="8"
+      readonly
+    >{{ answer or '' }}</textarea>
+
+{% endif %}
+    <input type="hidden" name="id" value="{{ id }}">
+
+    <button class="w3-button w3-teal w3-margin-top" type="submit">
+      Сохранить
+    </button>
+  </form>
+
+</div>
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+
