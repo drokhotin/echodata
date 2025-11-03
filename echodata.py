@@ -1476,13 +1476,14 @@ def templates():
     return render_template("templates.html", templates=templates)
 
 
-# 29-10-2025 4.0
+# 29-10-2025 4.0. new and edit templateform
 @app.route('/newtemplateform/<id>', methods=['GET', 'POST'])
 @login_required
 def newtemplateform(id=0):
     if request.method == 'POST':
         try:
-            template = TemplateForm.get(id=id)                
+            template = TemplateForm.get(id=id)
+            modification=True                
         except:
             template = TemaplateForm.create(
                 {
@@ -1498,6 +1499,7 @@ def newtemplateform(id=0):
                     'template_print': ''
                 }
             )
+            modification=False
             
         template.title = request.form['title']
         template.sort = request.form['sort']
@@ -1512,6 +1514,15 @@ def newtemplateform(id=0):
             filename = unique_secure_filename(file.filename, 0)
             file_path= os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
+            if (modification):
+                file_path= os.path.join(app.config['UPLOAD_FOLDER'], template.xlsx_file)
+                # remove previous uploaded xlsx if present
+                old_path = os.path.join(app.config['UPLOAD_FOLDER'], template.xlsx_file)
+                if template.xlsx_file and os.path.exists(old_path):
+                    try:
+                        os.remove(old_path)
+                    except OSError:
+                        app.logger.exception("Failed to remove old xlsx file: %s", old_path)
             template.xlsx_file = filename
             template_form = form_from_xlsx(title='', header=template.title, 
                                                description=template.description, file_path=file_path)
