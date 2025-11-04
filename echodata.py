@@ -700,7 +700,7 @@ def openai(id):
         records = Record.select().where((Record.patient==id) & (Record.recorddate >= date_after) & (Record.recorddate <= date_before)).order_by(Record.recorddate.desc())
         patient = Patient.get(Patient.id==id)
         all_records = "\nСледующая запись\n".join([f"Дата {rec.recorddate}, {html2text.html2text(rec.html)}" for rec in records])
-        all_records = all_records.replace(patient.name, "ИМЯ_ПАЦИЕНТА").replace(patient.surname, "ФАМИЛИЯ_ПАЦИЕНТА")
+        all_records = all_records.replace(patient.name[:-1], "ИМЯ_ПАЦИЕНТА").replace(patient.surname[:-1], "ФАМИЛИЯ_ПАЦИЕНТА")
         messages=[
             {
                 "role": "system",
