@@ -31,6 +31,10 @@
       value="{{ prompt or '' }}"
       required
     >
+    <button class="w3-button w3-teal w3-margin-top" type="submit">
+      Отправить
+    </button>
+    
 {% if answer %}
     <label class="w3-text-grey w3-margin-top"><b>Ответ:</b></label>
     <textarea 
@@ -43,9 +47,7 @@
 {% endif %}
     <input type="hidden" name="id" value="{{ id }}">
 
-    <button class="w3-button w3-teal w3-margin-top" type="submit">
-      Сохранить
-    </button>
+    
   </form>
 
 </div>

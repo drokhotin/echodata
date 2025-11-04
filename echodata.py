@@ -699,30 +699,50 @@ def openai(id):
         patient = Patient.get(Patient.id==id)
         all_records = "\nСледующая запись\n".join([f"Дата {rec.recorddate}, {html2text.html2text(rec.html)}" for rec in records])
         all_records = all_records.replace(patient.name, "ИМЯ_ПАЦИЕНТА").replace(patient.surname, "ФАМИЛИЯ_ПАЦИЕНТА")
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "Ты помощник врача. "
+                    "Анализируй историю болезни пациента и давай осторожные, "
+                    "осмотрительные рекомендации. Никогда не ставь окончательный диагноз "
+                    "и не отменяй назначения врача."
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    f"История болезни пациента:\n\n{all_records}\n\n"
+                    f"Вопрос врача:\n{prompt}"
+                ),
+            },
+        ]
 
-        response = client.chat.completions.create(
-            model="gpt-4.1-mini",  # or another current model
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "Ты помощник врача. "
-                        "Анализируй историю болезни пациента и давай осторожные, "
-                        "осмотрительные рекомендации. Никогда не ставь окончательный диагноз "
-                        "и не отменяй назначения врача."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        f"История болезни пациента:\n\n{all_records}\n\n"
-                        f"Вопрос врача:\n{prompt}"
-                    ),
-                },
-            ],
-        )
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4.1-mini",  # or another current model
+                messages=messages
+            )
+            answer = response.choices[0].message.content
+        except Exception as e:
+            CHAD_API_KEY = os.getenv("CHAD_API_KEY", '')
+            request_json = {
+                "message": prompt,
+                "api_key": CHAD_API_KEY,
+                "history": messages
+            }
+            response = requests.post(url='https://ask.chadgpt.ru/api/public/gpt-5-mini',
+                         json=request_json)
+            
+            if response.status_code != 200:
+                return(f'Ошибка! Код http-ответа: {response.status_code}')
+            else:
+                resp_json = response.json()
+            if resp_json['is_success']:
+                answer = f"{resp_json['response']}\nИспользовано слов:{resp_json['used_words_count']}"
+            else:
+                answer = f"Ошибка: {resp_json['error_message']}"
 
-        answer = response.choices[0].message.content
         return render_template('openai.html', id=id, prompt=prompt, answer=answer, patient=patient)
     patient = Patient.get(Patient.id==id)
     return render_template('openai.html', id=id, patient=patient)
