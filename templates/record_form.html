@@ -262,20 +262,62 @@ document.onkeydown = function(e) {
     }
 
 
-    
-      function showhide(id) {
-        element=document.getElementById(id);
-        sign=document.getElementById(id+'-sign');
-        if (element.style.display=="none") {
-            element.style.display="block";
-            sign.innerHTML="&#9207;"
+function showhide(id) {
+    var element = document.getElementById(id);
+    if (!element) return;
+    var sign = document.getElementById(id + '-sign');
+    // Helper to check if an element is a descendant of another
+    function isDescendant(parent, child) {
+        var node = child;
+        while (node) {
+            if (node === parent) return true;
+            node = node.parentElement;
         }
-        else {
-            element.style.display="none";
-            sign.innerHTML="&#9205;"
-        }
+        return false;
+    }
+    // Find all sentence-group elements
+    var groups = Array.prototype.slice.call(document.getElementsByClassName('sentence-group'));
+    var isOpen = element.style.display !== 'none' && element.style.display !== '';
+    if (!isOpen) {
+        // If target is closed -> close all other groups except target and its ancestor groups
+        groups.forEach(function(g) {
+            if (g === element) return;
+            if (isDescendant(g, element)) {
+                // g is an ancestor of element: keep it open
+                return;
+            }
+            // otherwise close it
+            g.style.display = 'none';
+            var sid = g.id ? (g.id + '-sign') : null;
+            if (sid) {
+                var sEl = document.getElementById(sid);
+                if (sEl) sEl.innerHTML = '⏵';
+            }
+        });
+        // open the target
+        element.style.display = 'block';
+        if (sign) sign.innerHTML = '⏷';
+    } else {
+        // If target already open -> just close it
+        element.style.display = 'none';
+        if (sign) sign.innerHTML = '⏵';
+    }
+};
 
-    };
+    
+//      function showhide(id) {
+//        element=document.getElementById(id);
+//        sign=document.getElementById(id+'-sign');
+//        if (element.style.display=="none") {
+//            element.style.display="block";
+//            sign.innerHTML="&#9207;"
+//        }
+//        else {
+//            element.style.display="none";
+//            sign.innerHTML="&#9205;"
+//        }
+//
+//    };
 
         // Add slight animation to input focus
         document.querySelectorAll('.form-input').forEach(input => {

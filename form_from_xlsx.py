@@ -261,7 +261,7 @@ def html_form_contents(df):
             <label><span id="sentence-group-{sentence_group}-sign">&#9205;</span> {safe(row.parameter)}</label>
             </div>
         </div>
-         <div id="sentence-group-{sentence_group}" style="border-left-style: solid;border-left-color:blue;padding-left:1em;display:none;">
+         <div id="sentence-group-{sentence_group}" class="sentence-group" style="border-left-style: solid;border-left-color:blue;padding-left:1em;display:none;">
         """)
   
         if row.type=='end_sentence_group':
