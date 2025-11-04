@@ -695,7 +695,9 @@ def index():
 def openai(id):
     if request.method == 'POST':
         prompt = request.form['prompt']
-        records = Record.select().where(Record.patient==id).order_by(Record.recorddate.desc())
+        date_after = request.form.get('date_after', (dt.now()-tdelta(days=30)).strftime('%Y-%m-%d'))
+        date_before = request.form.get('date_before', (dt.now()-tdelta(days=30)).strftime('%Y-%m-%d'))
+        records = Record.select().where((Record.patient==id) & (Record.recorddate >= date_after) & (Record.recorddate <= date_before)).order_by(Record.recorddate.desc())
         patient = Patient.get(Patient.id==id)
         all_records = "\nСледующая запись\n".join([f"Дата {rec.recorddate}, {html2text.html2text(rec.html)}" for rec in records])
         all_records = all_records.replace(patient.name, "ИМЯ_ПАЦИЕНТА").replace(patient.surname, "ФАМИЛИЯ_ПАЦИЕНТА")
@@ -743,9 +745,11 @@ def openai(id):
             else:
                 answer = f"Ошибка: {resp_json['error_message']}"
 
-        return render_template('openai.html', id=id, prompt=prompt, answer=answer, patient=patient)
+        return render_template('openai.html', id=id, prompt=prompt, answer=answer, patient=patient, date_after=date_after, date_before=date_before)
     patient = Patient.get(Patient.id==id)
-    return render_template('openai.html', id=id, patient=patient)
+    return render_template('openai.html', id=id, patient=patient, 
+                           date_after = (dt.now()-tdelta(days=30)).strftime('%Y-%m-%d'),
+                           date_before = (dt.now()).strftime('%Y-%m-%d'))
 
 
 

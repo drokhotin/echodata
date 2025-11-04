@@ -31,10 +31,30 @@
       value="{{ prompt or '' }}"
       required
     >
-    <button class="w3-button w3-teal w3-margin-top" type="submit">
-      Отправить
-    </button>
-    
+    <label class="w3-text-grey"><b>С какого числа смотреть записи:</b></label>
+    <input 
+      class="w3-input w3-border w3-round-large"
+      type="date"
+      name="date_after"
+      value="{{ date_after }}"
+      required
+    >
+
+    <label class="w3-text-grey"><b>До какого числа смотреть записи:</b></label>
+    <input 
+      class="w3-input w3-border w3-round-large"
+      type="date"
+      name="date_before"
+      value="{{ date_before }}"
+      required
+    >
+
+
+
+    <input class="w3-button w3-teal w3-margin-top" type="submit" value="Отправить запрос">
+    <br>
+
+
 {% if answer %}
     <label class="w3-text-grey w3-margin-top"><b>Ответ:</b></label>
     <textarea 
