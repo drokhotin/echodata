@@ -475,12 +475,29 @@ function appendRTE(rteId, sentenceId){
 
   // Add space or line break depending on punctuation
   const lastChar = editor.innerText.trim().slice(-1);
+  const firstChar = sentence.innerText.trim().charAt(0);
+
   if (lastChar === ".") {
+    if (/^[\p{Lu}\d]$/u.test(firstChar)) {
+      editor.appendChild(document.createElement("br"));
+
+    } else {
+      editor.appendChild(document.createTextNode(", "));
+      
+    }
+  
+  } else if (lastChar !== "." && /^\p{Lu}$/u.test(firstChar) && lastChar !== "") {
+    editor.appendChild(document.createTextNode("."));
     editor.appendChild(document.createElement("br"));
   } else if (lastChar !== "" && lastChar !== " ") {
     editor.appendChild(document.createTextNode(" "));
   }
-    
+
+editor.innerHTML = editor.innerHTML
+  .replace(/,\s*\./g, '.')
+  .replace(/\.\s*,/g, ',');
+
+  
   editor.insertAdjacentHTML("beforeend", sentence.innerHTML);
   if (typeof editor.sync === "function") editor.sync();
 }

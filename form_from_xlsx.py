@@ -202,7 +202,7 @@ def html_form_contents(df):
             <input type='hidden' id='hide_{safe(row.code)}' name='hide_{safe(row.code)}' value='{{{{ echo.hide_{safe(row.code)} }}}}'>        
             <div class="w3-col s12 text-area-sentence" onclick="document.getElementById('{safe(row.textarea)}').value+=
             document.getElementById('{safe(row.code)}').innerHTML+'\\n';">
-            +
+            {safe(row.get('prefix', '+') if row.get('prefix', '+') else '+')} 
             <label id='{safe(row.code)}'>{safe(row.parameter)}</label>
             </div>
         </div>""")
@@ -212,7 +212,7 @@ def html_form_contents(df):
         <div class="w3-row-padding" id='row_{safe(row.code)}'>
             <input type='hidden' id='hide_{safe(row.code)}' name='hide_{safe(row.code)}' value='{{{{ echo.hide_{safe(row.code)} }}}}'>        
             <div class="w3-col s12 text-area-sentence" onclick="appendRTE('{safe(row.textarea)}', '{safe(row.code)}')">
-            + 
+            {safe(row.get('prefix', '+') if row.get('prefix', '+') else '+')} 
             <label id='{safe(row.code)}'>{clean(row.parameter)}</label>
             </div>
         </div>""")
