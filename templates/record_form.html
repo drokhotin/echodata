@@ -452,7 +452,7 @@ function initRTE(container){
   // sync sanitized HTML + plain text
   function sync(){
     const clean = DOMPurify.sanitize(editor.innerHTML, {
-      ALLOWED_TAGS:['b','i','u','ul','ol','li','a','p','br','font','h1','h2','img'],
+      ALLOWED_TAGS:['b','i','u','ul','ol','li','a','p','br','font','h1','h2','img', 'div'],
       ALLOWED_ATTR:['href','target','rel','size','src','alt']
     });
     htmlField.value = clean;
