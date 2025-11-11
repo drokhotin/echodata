@@ -721,13 +721,14 @@ def html_form_scripts(df):
         for argument in arguments:
             html.append(f"if (el_{argument}.value == '') empty = 1;")
             html.append(f"const {argument} = toNum(el_{argument}.value);")
+        html.append("if (empty && i==1){return(0)};")
         html.append(f"let step = parseFloat(el_{variable}.step);")
         html.append("if (isNaN(step)) step=1;")
     
         html.append(f"const result_{variable} = calc_{variable}({{{', '.join([f'{arg}: {arg}' for arg in arguments])}}});")
         html.append(f"if (Number.isFinite(result_{variable}) & result_{variable}!=0) {{ el_{variable}.value = roundToStep(result_{variable}, step); }}")
         html.append(f"if (result_{variable}==0) {{ el_{variable}.value = ''; }}")
-        html.append(f"if (empty && i>1) {{el_{variable}.value = '';}}; ") ## check that this is not initial update
+        html.append(f"if (empty && i>1) {{el_{variable}.value = '';}}; ") 
 #        html.append(f"if (result_{variable} == el_{variable}.value) return -1; ")
 
 
