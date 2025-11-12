@@ -1,4 +1,4 @@
-{% extends "basic-2.html" %}
+{% extends "basic-2-without-nav.html" %}
 
 {% block title %}Эходата 3.0: список DICOM-исследований{% endblock %}
 {% block head %}
@@ -7,18 +7,7 @@
 {% endblock %}
 
 {% block index %}
-  <div id="ip-address">Loading your IP address...</div>
-  
-  <script>
-    fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('ip-address').textContent = 'Your IP Address: ' + data.ip;
-      })
-      .catch(error => {
-        document.getElementById('ip-address').textContent = 'Could not retrieve IP address';
-      });
-  </script>
+
 
 <form method="get" class="w3-container w3-card-4 w3-light-grey w3-text-green w3-margin">
 
@@ -27,27 +16,29 @@
 <div class="w3-row w3-section">
   <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
     <div class="w3-rest">
-      <input class="w3-input w3-border" name="surname" type="text" placeholder="Фамилия" value="{{ surname }}">
+      <label>Фамилия, имя, отчество</label>
+      <input class="w3-input w3-border" id="filterName" placeholder="Filter by name" oninput="filterStudyTable()" />
     </div>
 </div>
 
 <div class="w3-row w3-section">
   <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
     <div class="w3-rest">
-      <input class="w3-input w3-border" name="name" type="text" placeholder="Имя" value="{{ name }}">
+      <label>Дата рождения</label>
+      <input class="w3-input w3-border" id="filterBirth" placeholder="YYYY-MM-DD" oninput="filterStudyTable()" />
     </div>
 </div>
 
 <div class="w3-row w3-section">
   <div class="w3-col" style="width:50px"><i class="w3-xxlarge"></i></div>
     <div class="w3-rest">
-      <input class="w3-input w3-border" name="fathername" type="text" placeholder="Отчество" value="{{ fathername }}">
+      <label>Дата исследования</label>
+      <input class="w3-input w3-border" id="filterStudy" placeholder="YYYY-MM-DD" oninput="filterStudyTable()" />
     </div>
 </div>
-
-
-<button class="w3-button w3-block w3-section w3-green w3-ripple w3-padding">Найти</button>
-
+<div>
+<button class="w3-button w3-green w3-margin" onclick="clearStudyFilters()">Очистить фильтры</button>
+</div>
 </form>
 
 
@@ -59,7 +50,9 @@
 <div class="w3-container">
 
 
-<table class="w3-table w3-striped w3-hoverable">
+<table class="w3-table w3-striped w3-hoverable" id="studyTable">
+
+
 
     <tr>
         <th>
@@ -73,7 +66,6 @@
             Study date
         </th>
     </tr>
-
 
 
 {% for study in studies |sort(attribute="StudyDate.value", reverse=True) %}
@@ -96,6 +88,45 @@
 
 </table>
 </div>
+
+<script>
+function normalize(s) {
+  return (s || "").toString().trim().toLowerCase();
+}
+
+function filterStudyTable() {
+  const nameFilter  = normalize(document.getElementById("filterName").value);
+  const birthFilter = normalize(document.getElementById("filterBirth").value);
+  const studyFilter = normalize(document.getElementById("filterStudy").value);
+
+  const table = document.getElementById("studyTable");
+  const rows  = table.getElementsByTagName("tr");
+
+  // Start after header (0) and filter row (1)
+  for (let i = 2; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName("td");
+    if (cells.length < 3) continue;
+
+    const nameTxt  = normalize(cells[0].textContent);
+    const birthTxt = normalize(cells[1].textContent);
+    const studyTxt = normalize(cells[2].textContent);
+
+    const match =
+      (!nameFilter  || nameTxt.includes(nameFilter)) &&
+      (!birthFilter || birthTxt.includes(birthFilter)) &&
+      (!studyFilter || studyTxt.includes(studyFilter));
+
+    rows[i].style.display = match ? "" : "none";
+  }
+}
+
+function clearStudyFilters() {
+  document.getElementById("filterName").value = "";
+  document.getElementById("filterBirth").value = "";
+  document.getElementById("filterStudy").value = "";
+  filterStudyTable();
+}
+</script>
 
 {% endblock %}
 
