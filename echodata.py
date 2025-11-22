@@ -1561,8 +1561,8 @@ def newtemplateform(id=0):
             template = TemplateForm.get(id=id)
             modification=True                
         except:
-            template = TemaplateForm.create(
-                {
+            template = TemplateForm.create(
+                **{
                     'title': '',
                     'sort': '',
                     'description': '',

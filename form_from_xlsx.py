@@ -4,7 +4,7 @@ import bleach
 import pandas as pd
 
 locale='ru'
-types_of_coded_fields = ['numeric', 'textarea', 'rte', 'text', 'select_one', 'other_starts_with',
+types_of_coded_fields = ['numeric', 'logical', 'textarea', 'rte', 'text', 'select_one', 'other_starts_with',
                              'others_others', 'rich_sentence', 'sentence']
 funcs = ['SIN', 'COS', 'LOG', 'MAX', 'MIN', 'LOG', 'ABS', 'TRUNC']
 
@@ -105,6 +105,7 @@ def html_form_contents(df):
 
     for index, row in df.iterrows():
         if row.code!='':
+
             if row.type=='numeric':
                 reference, lower, upper = row.reference, row.lower, row.upper
                 if reference == '':
@@ -127,10 +128,39 @@ def html_form_contents(df):
             </div>
 
             <div class="w3-col s2">
-              <input type='number' step='{safe(row.get('precision', 1))}' name='{safe(row.code)}' id='{safe(row.code)}' value='{{{{ echo.{safe(row.code)} }}}}' class="w3-input w3-round">
+              <input type='number' step='{safe(row.get('precision', 1))}' 
+              name='{safe(row.code)}' id='{safe(row.code)}' 
+              value='{{{{ echo.{safe(row.code)} }}}}' class="w3-input w3-round">
             </div>
         </div>""")
-        
+
+
+            if row.type=='logical':
+                        
+                parameters.append(f"""
+        <div class="w3-row-padding w3-col-bottom w3-border-bottom" id='row_{safe(row.code)}'>
+            <input type='hidden' id='hide_{safe(row.code)}' name='hide_{safe(row.code)}' value='{{{{ echo.hide_{safe(row.code)} }}}}'>        
+            <div class="w3-col s12 w3-input">
+              <br>
+              
+              <input type='checkbox' name='{safe(row.code)}_checkbox' id='{safe(row.code)}_checkbox' 
+              {{{{ 'checked' if echo.get('{safe(row.code)}', {int(row.choices!='')}) | int else '' }}}} 
+              onchange="{{ {safe(row.code)}.value = this.checked ? 1 : 0;
+                        onInput_{safe(row.code)}(); }}"
+                        style="transform: scale(1.4); cursor:pointer;">
+              &nbsp;
+
+              <label for='{safe(row.code)}_checkbox'>
+                {safe(row.parameter)}
+              </label>
+
+              <input type="hidden" name="{safe(row.code)}" id="{safe(row.code)}" 
+              value={{{{ echo.get('{safe(row.code)}', {int(row.choices!='')}) }}}}>
+
+            </div>
+        </div>""")
+
+
             if row.type=='text':
                 parameters.append(f"""
         <div class="w3-row-padding w3-col-bottom w3-border-bottom" id='row_{safe(row.code)}'>
@@ -442,7 +472,7 @@ def html_printable_contents(df):
             column=0
         
         
-        if row.type=='numeric':
+        if row.type=='numeric' and row.get('printable', 'yes').upper()!='NO':
             parameters.append(f"""
                 {{% if echo.{safe(row.code)}!='' and echo.hide_{safe(row.code)}!="1" %}}
                 
@@ -464,8 +494,30 @@ def html_printable_contents(df):
                 {{% set _ = rows.append(block) %}}
                 {{% endif %}}
                 """)                
+
         
-        if row.type=='text':
+        if row.type=='logical' and row.get('printable', 'yes').upper()!='NO':
+            parameters.append(f"""
+                {{% if echo.{safe(row.code)}!='' and echo.hide_{safe(row.code)}!="1" %}}
+                
+                {{% if not tab_heading.shown %}}
+                  {{{{ tab_heading.heading | safe }}}}
+                  {{% set tab_heading.shown = true %}}
+                {{% endif %}}""")
+            if table==0:
+                table=1
+            parameters.append(f"""
+                {{% set block %}}
+                <tr>
+                   <td>{safe(row.parameter)}</td>
+                </tr>
+                {{% endset %}}
+                {{% set _ = rows.append(block) %}}
+                {{% endif %}}
+                """)                
+
+
+        if row.type=='text' and row.get('printable', 'yes').upper()!='NO':
             parameters.append(f"""
                 {{% if echo.{safe(row.code)}!='0' and echo.hide_{safe(row.code)}!="1" %}}
                 {{% if not tab_heading.shown %}}

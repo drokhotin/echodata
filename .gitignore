@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 .env
+Untitled.ipynb
+.ipynb_checkpoints
+.gitignore
