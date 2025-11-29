@@ -498,7 +498,7 @@ def html_printable_contents(df):
         
         if row.type=='logical' and row.get('printable', 'yes').upper()!='NO':
             parameters.append(f"""
-                {{% if echo.{safe(row.code)}!='' and echo.hide_{safe(row.code)}!="1" %}}
+                {{% if echo.{safe(row.code)}!="0" and echo.hide_{safe(row.code)}!="1" %}}
                 
                 {{% if not tab_heading.shown %}}
                   {{{{ tab_heading.heading | safe }}}}
