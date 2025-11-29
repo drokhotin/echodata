@@ -1805,7 +1805,7 @@ def filltemplateform(tid='0', pid='0', rid='0'):
         except:
             config = Config.get(default=1)
         return render_template("record_form_print.html", record=rec, config=config)
-
+    echo['_SIGNATURE'] = g.doctor.signature
 #    return html_escape(templateform.template_html)
     return render_template_string(templateform.template_html, echo=echo, patient=patient,
                                  record=rec)
