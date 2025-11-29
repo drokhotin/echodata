@@ -1554,7 +1554,7 @@ def templates():
 
 # 29-10-2025 4.0. new and edit templateform
 @app.route('/newtemplateform/<id>', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def newtemplateform(id=0):
     if request.method == 'POST':
         try:
