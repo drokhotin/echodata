@@ -783,8 +783,8 @@ def html_form_scripts(df):
         html.append(f"if (empty && i>1) {{el_{variable}.value = '';}}; ") 
 #        html.append(f"if (result_{variable} == el_{variable}.value) return -1; ")
 
+        html.append(f"refupdate_{variable}();")
 
-        html.append(f"refupdate_{variable}()")
         
         for dependent_variable in dependence.get(variable, []):
             html.append(f"update_{dependent_variable}(i+1);")
@@ -906,7 +906,7 @@ def html_form_scripts(df):
     html.append("")
 
 
-## Initial calculation of empty fields ###############################
+## Initial calculation of empty fields and check reference values ###############################
     
     html.append(f"""
     function calcInitial(i=1){{""")
@@ -914,6 +914,11 @@ def html_form_scripts(df):
     for dependent_variable in dependent:
         html.append(f"""
         if (el_{dependent_variable}.value == '') {{update_{dependent_variable}()}};""")
+    for ref_variable in referenced_variables:
+        html.append(f"""
+        refupdate_{ref_variable}();""")
+
+
 #    html.append("if (i<5) {calcInitial(i+1)};")
     html.append("}")
     html.append("calcInitial();")
