@@ -169,9 +169,11 @@
                     <button class="w3-button w3-teal" type="button" onclick="document.getElementById('download').click()">Загрузить</button>`;
             }
             buttons.innerHTML=`
-                <a href='/deleteattachment/`+aid+`' id='delete'></a>
+                <form method='post' action='/deleteattachment/`+aid+`' id='delete'>
+                  <input type='hidden' name='csrf_token' value='{{ csrf_token() }}'>
+                </form>
                 <a href='/loadattachment/`+aid+`?m=attach' id='download'></a>
-                <button class="w3-button w3-teal" type="button" onclick="document.getElementById('delete').click()">&#128686;</button>
+                <button class="w3-button w3-teal" type="button" onclick="document.getElementById('delete').submit()">&#128686;</button>
                 <button class="w3-button w3-teal" type="button" onclick="document.getElementById('download').click()">&DoubleDownArrow;</button>`
         }
         else {
@@ -233,5 +235,4 @@
 
 {% block footer %}
 {% endblock %}
-
 

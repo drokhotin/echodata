@@ -1,8 +1,5 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
 .env
-Untitled.ipynb
-.ipynb_checkpoints
-.gitignore
+.venv/
+__pycache__/
+*.py[cod]
+uploads/
