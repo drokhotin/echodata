@@ -469,7 +469,7 @@ def api_auth_required(f):
     return decorated_function
 
 
-def can_access_record(record):
+def can_edit_record(record):
     return g.doctor.id == record.author.id or g.doctor.email.lower() in app.config['admins']
 
 
@@ -1319,8 +1319,6 @@ def recordprint(rid):
         patient = record.patient
     except:
         return 'No such record.'
-    if not can_access_record(record):
-        abort(403)
 
     try:
         config = Config.get(default=1)
@@ -1337,7 +1335,7 @@ def record_duplicate(rid):
         patient = record.patient
     except:
         return 'Записей нет.'
-    if not can_access_record(record):
+    if not can_edit_record(record):
         abort(403)
     new = model_to_dict(record)
     new.pop("id")
@@ -1361,10 +1359,11 @@ def record(rid):
         patient = record.patient
     except:
         return 'Записей нет.'
-    if not can_access_record(record):
-        abort(403)
     mode=request.args.get('m', 'view')
     isnew=request.args.get('n', 'old')
+
+    if request.method == 'POST' and not can_edit_record(record):
+        abort(403)
 
 # Echodata 4.0
     
@@ -1428,7 +1427,7 @@ def record(rid):
         old.pop("author")
         old.pop("id")
         old['current']=record
-        if record.author==g.doctor:  # prohibits to change other's records
+        if can_edit_record(record):
             Record_old.create(**old)
 
             record.html = html
@@ -1445,13 +1444,13 @@ def record(rid):
     if record.sort == 'JSON':
         jscont = json.loads(record.contents)
         return render_template('record_json.html', record=record, patient=patient, isnew=isnew, \
-            mode=mode, date_form=date_form(record.recorddate,1,1), time_form=time_form(record.recorddate),
+            mode=mode, can_edit=can_edit_record(record), date_form=date_form(record.recorddate,1,1), time_form=time_form(record.recorddate),
             view=(jscont['default'] if 'default' in jscont else 'json'),
             html=render_template_string(record.html, report=jscont['value'])
             )
 
     return render_template('record.html', record=record, patient=patient, isnew=isnew, \
-        mode=mode, date_form=date_form(record.recorddate,1,1), time_form=time_form(record.recorddate))    # модификация/просмотр исследования занесены в темплейт (в зависимости от атрибута ?edit )
+        mode=mode, can_edit=can_edit_record(record), date_form=date_form(record.recorddate,1,1), time_form=time_form(record.recorddate))    # модификация/просмотр исследования занесены в темплейт (в зависимости от атрибута ?edit )
 
 @app.route('/version/<rid>', methods=['GET', 'POST'])                                                     # исследование
 @login_required
@@ -1461,14 +1460,12 @@ def version(rid):
         patient = record.patient
     except:
         return 'No such record.'
-    if not can_access_record(record):
-        abort(403)
     versions = record.versions
 
     act = request.args.get('a', '')
     ver = request.args.get('v', 0)
     if (act=='update' and ver!=0):
-        if (g.doctor==record.author):
+        if can_edit_record(record):
             old = model_to_dict(record)
             old.pop("patient")
             old.pop("author")
@@ -1847,6 +1844,8 @@ def filltemplateform(tid='0', pid='0', rid='0'):
             rec.save()
         if rid!='0':
             rec = Record.get(id=rid)
+            if not can_edit_record(rec):
+                abort(403)
 
             old = model_to_dict(rec)
             old.pop("patient")
@@ -1873,10 +1872,14 @@ def filltemplateform(tid='0', pid='0', rid='0'):
             rec = Record.get(id=rid)
             echo = json.loads(rec.data)
         except:
-            rec={'recorddate': dt.now(),
-                 'title': templateform.title, 
-                 'sort': templateform.sort,
-                 'id': 0}
+            rec = None
+    if rec is not None and not can_edit_record(rec):
+        return render_template_string(templateform.template_print, echo=echo, patient=patient, record=rec)
+    if rec is None:
+        rec={'recorddate': dt.now(),
+             'title': templateform.title,
+             'sort': templateform.sort,
+             'id': 0}
     if is_old:
         try:
             config = Config.get(author=g.doctor)
@@ -2452,8 +2455,6 @@ def load_attachment(aid):
         att=Attachment.get(id=aid)
     except:
         return('No such attachment')
-    if not can_access_record(att.record):
-        abort(403)
     mode=request.args.get('m', '')
     if mode=='attach':
         filename=oldfilename(att.filename)
@@ -2471,7 +2472,7 @@ def delete_attachment(aid):
     if att is None:
         abort(404)
     record=att.record
-    if not can_access_record(record):
+    if not can_edit_record(record):
         abort(403)
     att.delete_instance()
 

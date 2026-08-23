@@ -76,7 +76,7 @@
 <span id='buttons'>
 
 {% if mode=='view' %}
-  {% if record.author.id == g.doctor.id %}
+  {% if can_edit %}
     {% if record.versions|length > 0 %}
        <a class="w3-button w3-teal" href={{ url_for('version', rid=record.id) }}>Версия:
     {% else %}
@@ -89,7 +89,9 @@
   <button class="w3-button w3-teal" type="button" onclick="getElementById('markup').click()">#*_/</button>
   {% endif %}
   <button class="w3-button w3-teal" type="button" id="print" onclick="window.open('/recordprint/{{ record.id }}')"><b>&#128424;</b></button>
+  {% if can_edit %}
   <button class="w3-button w3-teal" type="button" onclick="getElementById('duplicate').click()"><b>++</b></button>
+  {% endif %}
 
 {% elif mode in ['html', 'markup'] %}
     <button class="w3-button w3-teal" id="save" type="submit">Сохранить</button>
@@ -235,4 +237,3 @@
 
 {% block footer %}
 {% endblock %}
-
