@@ -722,7 +722,8 @@ def init():
 
 
 def hash_password(password):
-    return generate_password_hash(password, method='scrypt')
+    return generate_password_hash(password, method='pbkdf2:sha256')
+
 
 def check_password(hashed_password, user_password):
     # Retain a one-time compatibility path for existing accounts.  Successful
