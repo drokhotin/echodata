@@ -5,7 +5,7 @@ from flask import Flask
 from dotenv import load_dotenv
 import os
 
-from flask import Flask, redirect, render_template, request, url_for,  \
+from flask import Flask, abort, flash, redirect, render_template, request, url_for,  \
         session, send_from_directory, render_template_string, Response
 from time import sleep
 from flask import jsonify, g
@@ -29,6 +29,7 @@ import sqlite3 as sqlite
 import json
 
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash, generate_password_hash
 import bleach
 import csv
 import re
@@ -37,6 +38,9 @@ from html import escape as html_escape
 
 from uuid import uuid4
 from hashlib import sha256
+from hmac import compare_digest
+from secrets import token_urlsafe
+from urllib.parse import urlparse, urljoin
 
 from flask_sslify import SSLify
 
@@ -56,14 +60,29 @@ import io # for search and csv output
 
 
 
-app = Flask(__name__) #, static_folder='static', static_url_path='')
 load_dotenv()
 
 from openai import OpenAI
-client = OpenAI()
+client = OpenAI() if os.getenv('OPENAI_API_KEY') else None
 
 
-app.config["DEBUG"] = os.getenv("DEBUG", 'True').lower() == 'true'
+def required_env(name):
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(f"{name} must be configured before EchoData starts")
+    return value
+
+
+app = Flask(__name__) #, static_folder='static', static_url_path='')
+
+
+app.config["DEBUG"] = os.getenv("DEBUG", 'False').lower() == 'true'
+app.config['SECRET_KEY'] = required_env('SECRET_KEY')
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = os.getenv('SESSION_COOKIE_SECURE', 'True').lower() == 'true'
+app.config['MAX_CONTENT_LENGTH'] = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))
+app.config['AI_ALLOW_PHI'] = os.getenv('AI_ALLOW_PHI', 'False').lower() == 'true'
 
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'doc', 'docx', 'zip', 'png', 'jpg', 'jpeg', 'gif', 'odt', 'xlsx'])
@@ -73,31 +92,31 @@ app.config['TEMPLATES_AUTO_RELOAD'] = os.getenv('TEMPLATES_AUTO_RELOAD', 'True')
 
 mail=Mail(app)
 
-db_url = os.getenv("DATABASE_URL", 'mysql://okhotin:okhotin@localhost/okhotin')
+db_url = required_env("DATABASE_URL")
 db=connect(db_url)
 
-UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", '/Users/okhotin/Dropbox/echoview/working copy/uploads')
+UPLOAD_FOLDER = required_env("UPLOAD_FOLDER")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.jinja_env.globals['hasattr'] = hasattr
 
-app.config["dicom_server"] = os.getenv("DICOM_SERVER",'192.168.31.100')
-app.config["dicom_aet"] = os.getenv("DICOM_AET", 'VALSALVA')
-app.config["dicom_client"] = os.getenv("DICOM_CLIENT", 'Artemijs-MacBook')
-app.config["dicom_port"] = int(os.getenv("DICOM_PORT", "4242"))
+app.config["dicom_server"] = required_env("DICOM_SERVER")
+app.config["dicom_aet"] = required_env("DICOM_AET")
+app.config["dicom_client"] = required_env("DICOM_CLIENT")
+app.config["dicom_port"] = int(required_env("DICOM_PORT"))
 
 
 app.config.update(
-	MAIL_SERVER=os.getenv("MAIL_SERVER", 'smtp.gmail.com'),
+	MAIL_SERVER=os.getenv("MAIL_SERVER"),
 	MAIL_PORT=int(os.getenv("MAIL_PORT", 587)),
 	MAIL_USE_TLS=os.getenv("MAIL_USE_TLS", "True").lower()=="true",
 	MAIL_USE_SSL=os.getenv("MAIL_USE_SSL", "False").lower()=="true",
-	MAIL_USERNAME = os.getenv("MAIL_USER_NAME", 'dr.okhotin@gmail.com'),
-    MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER", 'dr.okhotin@gmail.com'),
+	MAIL_USERNAME = os.getenv("MAIL_USER_NAME"),
+    MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER"),
 	MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 
 	)
-app.config["admins"] = os.getenv("ADMINS").split(',')
+app.config["admins"] = [email.strip().lower() for email in required_env("ADMINS").split(',') if email.strip()]
 app.config["code_word"] = os.getenv("CODE_WORD")
 
 
@@ -109,7 +128,7 @@ mail=Mail(app)
 @app.before_request
 def before_request():
     session.permanent = True
-    app.permanent_session_lifetime = 60*60 # datetime.timedelta(minutes=20)
+    app.permanent_session_lifetime = tdelta(hours=1)
     session.modified = True
     #flask.g.user = flask_login.current_user
     try:
@@ -408,8 +427,55 @@ def admin_required(f):
     return decorated_function
 
 
+def csrf_token():
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = token_urlsafe(32)
+    return session['_csrf_token']
+
+
+@app.context_processor
+def inject_csrf_token():
+    return {'csrf_token': csrf_token}
+
+
+def csrf_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        supplied_token = request.form.get('csrf_token') or request.headers.get('X-CSRF-Token')
+        if not supplied_token or not compare_digest(supplied_token, csrf_token()):
+            abort(400, description='Invalid CSRF token')
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def api_auth_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if request.method != 'POST' or not request.is_json:
+            abort(415, description='POST application/json is required')
+        content = request.get_json(silent=True)
+        if not isinstance(content, dict):
+            abort(400, description='A JSON object is required')
+        username = content.get('username', '')
+        password = content.get('password', '')
+        if not isinstance(username, str) or not isinstance(password, str):
+            abort(400, description='Username and password are required')
+        doctor = Doctor.get_or_none(Doctor.email == username)
+        if doctor is None or not doctor.active or not check_password(doctor.passwordhash, password):
+            abort(401, description='Invalid credentials')
+        g.doctor = doctor
+        g.api_content = content
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def can_edit_record(record):
+    return g.doctor.id == record.author.id or g.doctor.email.lower() in app.config['admins']
+
+
 
 @app.route('/dicom')
+@admin_required
 def dicom():
     studies = get_studies(app.config['dicom_server'],
                           app.config['dicom_aet'],
@@ -418,6 +484,7 @@ def dicom():
     return render_template('dicom_studies.html', studies=studies)
 
 @app.route('/dicomall')
+@admin_required
 def dicomall():
     total_obs=[]
     studies = get_studies(app.config['dicom_server'],
@@ -444,6 +511,7 @@ def dicomall():
 
 
 @app.route('/dicom_sr_report/<uuid>')
+@admin_required
 def dicom_sr_report(uuid):
 
     srs = retrieve_comprehensive_srs(
@@ -481,6 +549,7 @@ def dicom_sr_report(uuid):
 
 
 @app.route('/dicom_sr_report_raw/<uuid>')
+@admin_required
 def dicom_sr_report_raw(uuid):
 
     srs = retrieve_comprehensive_srs(
@@ -653,13 +722,29 @@ def init():
 
 
 def hash_password(password):
-    # uuid is used to generate a random number
-    salt = uuid4().hex
-    return sha256(salt.encode() + password.encode()).hexdigest() + ':' + salt
+    # PBKDF2-SHA256 is broadly supported by older Python/OpenSSL builds.
+    # Prefer Argon2id in a future dependency-managed migration when available.
+    return generate_password_hash(password, method='pbkdf2:sha256')
 
 def check_password(hashed_password, user_password):
-    password, salt = hashed_password.split(':')
-    return password == sha256(salt.encode() + user_password.encode()).hexdigest()
+    # Retain a one-time compatibility path for existing accounts.  Successful
+    # interactive logins are upgraded below; newly created passwords are never
+    # stored with this legacy SHA-256 scheme.
+    if ':' in hashed_password and not hashed_password.startswith(('scrypt:', 'pbkdf2:')):
+        password, salt = hashed_password.rsplit(':', 1)
+        return compare_digest(password, sha256(salt.encode() + user_password.encode()).hexdigest())
+    return check_password_hash(hashed_password, user_password)
+
+
+def upgrade_legacy_password(doctor, password):
+    if ':' in doctor.passwordhash and not doctor.passwordhash.startswith(('scrypt:', 'pbkdf2:')):
+        doctor.passwordhash = hash_password(password)
+        doctor.save()
+
+
+def is_safe_redirect_url(target):
+    target_url = urlparse(urljoin(request.host_url, target))
+    return target_url.scheme in ('http', 'https') and target_url.netloc == request.host
 
 
 def login_required(f):
@@ -694,12 +779,17 @@ def index():
 @login_required
 def openai(id):
     if request.method == 'POST':
+        if client is None or not app.config['AI_ALLOW_PHI']:
+            abort(503, description='AI integration is disabled or not configured')
         prompt = request.form['prompt']
         date_after = request.form.get('date_after', (dt.now()-tdelta(days=30)).strftime('%Y-%m-%d'))
         date_before_str = request.form.get('date_before', (dt.now()-tdelta(days=30)).strftime('%Y-%m-%d'))
         date_before = dt.strptime(date_before_str, '%Y-%m-%d') + tdelta(days=1)
 
-        records = Record.select().where((Record.patient==id) & (Record.recorddate >= date_after) & (Record.recorddate <= date_before)).order_by(Record.recorddate.desc())
+        record_filter = ((Record.patient == id) & (Record.recorddate >= date_after) & (Record.recorddate <= date_before))
+        if g.doctor.email.lower() not in app.config['admins']:
+            record_filter &= (Record.author == g.doctor)
+        records = Record.select().where(record_filter).order_by(Record.recorddate.desc())
         num_records = len(records)
         patient = Patient.get(Patient.id==id)
         all_records = "\nСледующая запись\n".join([f"Дата {rec.recorddate}, {html2text.html2text(rec.html)}" for rec in records])
@@ -723,30 +813,11 @@ def openai(id):
             },
         ]
 
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4.1-mini",  # or another current model
-                messages=messages
-            )
-            answer = response.choices[0].message.content
-        except Exception as e:
-            CHAD_API_KEY = os.getenv("CHAD_API_KEY", '')
-            request_json = {
-                "message": prompt,
-                "api_key": CHAD_API_KEY,
-                "history": messages
-            }
-            response = requests.post(url='https://ask.chadgpt.ru/api/public/gpt-5-mini',
-                         json=request_json)
-            
-            if response.status_code != 200:
-                return(f'Ошибка! Код http-ответа: {response.status_code}')
-            else:
-                resp_json = response.json()
-            if resp_json['is_success']:
-                answer = f"{resp_json['response']}\nИспользовано слов:{resp_json['used_words_count']}"
-            else:
-                answer = f"Ошибка: {resp_json['error_message']}"
+        response = client.chat.completions.create(
+            model="gpt-4.1-mini",
+            messages=messages
+        )
+        answer = response.choices[0].message.content
 
         return render_template('openai.html', id=id, prompt=prompt, num_records=num_records, 
                                answer=answer, patient=patient, 
@@ -1290,6 +1361,9 @@ def record(rid):
     mode=request.args.get('m', 'view')
     isnew=request.args.get('n', 'old')
 
+    if request.method == 'POST' and not can_edit_record(record):
+        abort(403)
+
 # Echodata 4.0
     
     try:
@@ -1352,7 +1426,7 @@ def record(rid):
         old.pop("author")
         old.pop("id")
         old['current']=record
-        if record.author==g.doctor:  # prohibits to change other's records
+        if can_edit_record(record):
             Record_old.create(**old)
 
             record.html = html
@@ -1369,13 +1443,13 @@ def record(rid):
     if record.sort == 'JSON':
         jscont = json.loads(record.contents)
         return render_template('record_json.html', record=record, patient=patient, isnew=isnew, \
-            mode=mode, date_form=date_form(record.recorddate,1,1), time_form=time_form(record.recorddate),
+            mode=mode, can_edit=can_edit_record(record), date_form=date_form(record.recorddate,1,1), time_form=time_form(record.recorddate),
             view=(jscont['default'] if 'default' in jscont else 'json'),
             html=render_template_string(record.html, report=jscont['value'])
             )
 
     return render_template('record.html', record=record, patient=patient, isnew=isnew, \
-        mode=mode, date_form=date_form(record.recorddate,1,1), time_form=time_form(record.recorddate))    # модификация/просмотр исследования занесены в темплейт (в зависимости от атрибута ?edit )
+        mode=mode, can_edit=can_edit_record(record), date_form=date_form(record.recorddate,1,1), time_form=time_form(record.recorddate))    # модификация/просмотр исследования занесены в темплейт (в зависимости от атрибута ?edit )
 
 @app.route('/version/<rid>', methods=['GET', 'POST'])                                                     # исследование
 @login_required
@@ -1390,7 +1464,7 @@ def version(rid):
     act = request.args.get('a', '')
     ver = request.args.get('v', 0)
     if (act=='update' and ver!=0):
-        if (g.doctor==record.author):
+        if can_edit_record(record):
             old = model_to_dict(record)
             old.pop("patient")
             old.pop("author")
@@ -1769,6 +1843,8 @@ def filltemplateform(tid='0', pid='0', rid='0'):
             rec.save()
         if rid!='0':
             rec = Record.get(id=rid)
+            if not can_edit_record(rec):
+                abort(403)
 
             old = model_to_dict(rec)
             old.pop("patient")
@@ -1795,10 +1871,14 @@ def filltemplateform(tid='0', pid='0', rid='0'):
             rec = Record.get(id=rid)
             echo = json.loads(rec.data)
         except:
-            rec={'recorddate': dt.now(),
-                 'title': templateform.title, 
-                 'sort': templateform.sort,
-                 'id': 0}
+            rec = None
+    if rec is not None and not can_edit_record(rec):
+        return render_template_string(templateform.template_print, echo=echo, patient=patient, record=rec)
+    if rec is None:
+        rec={'recorddate': dt.now(),
+             'title': templateform.title,
+             'sort': templateform.sort,
+             'id': 0}
     if is_old:
         try:
             config = Config.get(author=g.doctor)
@@ -2099,11 +2179,12 @@ def login():
         docs = Doctor.select().where(Doctor.email==username)
         if docs.count()!=0:
             doc=docs.get()
-            if check_password(doc.passwordhash, password):
+            if doc.active and check_password(doc.passwordhash, password):
+                upgrade_legacy_password(doc, password)
                 session['username']=username
                 newsession = Session.create(whose=doc, beginning=dt.now(), end=dt.now()+tdelta(hours=1), ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
                 session['stored']=newsession.id
-        return redirect(nexturl)
+        return redirect(nexturl if nexturl and is_safe_redirect_url(nexturl) else url_for('index'))
 
 
     else:
@@ -2382,13 +2463,17 @@ def load_attachment(aid):
         return send_from_directory(app.config['UPLOAD_FOLDER'], att.filename)
 
 
-@app.route('/deleteattachment/<aid>')
+@app.route('/deleteattachment/<aid>', methods=['POST'])
 @login_required
+@csrf_required
 def delete_attachment(aid):
-    att=Attachment.get(id=aid)
+    att=Attachment.get_or_none(id=aid)
+    if att is None:
+        abort(404)
     record=att.record
-    if g.doctor.id==record.author.id:
-        att.delete_instance()
+    if not can_edit_record(record):
+        abort(403)
+    att.delete_instance()
 
     return redirect(url_for('record', rid=record.id, m='view'))
 
@@ -2588,41 +2673,27 @@ def beddays(from_d, to_d=dt(1978,7,18)):
     if to_d==dt(1978,7,18): to_d=dt.now()
     return relativedelta(dt(to_d.year, to_d.month, to_d.day), dt(from_d.year, from_d.month, from_d.day)).days
 
-@app.route('/insertrecord', methods=['GET', 'POST'])
+@app.route('/insertrecord', methods=['POST'])
+@api_auth_required
 def insertrecord():
-    if request.method == 'POST':
-        content=request.json
-        username = content['username']
-        password = content['password']
-
-        docs = Doctor.select().where(Doctor.email==username)
-        if docs.count()!=0:
-            doc=docs.get()
-            if check_password(doc.passwordhash, password):
-                recs=Record.delete().where((Record.recorddate==content['recorddate']) &
-                                           (Record.patient==content['patient_id']) &
-                                           (Record.author==doc))
-                recs.execute()
-                rec=Record.create(**content, created=dt.now(), modified=dt.now(), author = doc)
-                return(str(content['patient_id']))
-    return('Unsuccessful')
+    content = g.api_content.copy()
+    content.pop('username', None)
+    content.pop('password', None)
+    patient_id = content.get('patient_id')
+    if not patient_id or not Patient.get_or_none(Patient.id == patient_id):
+        abort(400, description='A valid patient_id is required')
+    recs=Record.delete().where((Record.recorddate==content.get('recorddate')) &
+                               (Record.patient==patient_id) &
+                               (Record.author==g.doctor))
+    recs.execute()
+    Record.create(**content, created=dt.now(), modified=dt.now(), author=g.doctor)
+    return str(patient_id)
 
 
-@app.route('/echoview', methods=['GET', 'POST'])
+@app.route('/echoview', methods=['POST'])
+@api_auth_required
 def echodata_from_echoview():
-    if request.method == 'POST':
-        content=request.json
-        username = content['username']
-        password = content['password']
-
-        docs = Doctor.select().where(Doctor.email==username)
-        if docs.count()!=0:
-            doc=docs.get()
-            if check_password(doc.passwordhash, password):
-              auth=1
-            else:
-              return('No such user!')
-    else: return('Not post request')
+    content = g.api_content
     fio, dob = content['name'], content['dob']
     ns=signletter(fio)
     if len(ns.split(' '))>3:

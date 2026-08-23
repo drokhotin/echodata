@@ -1,3 +1,6 @@
+import os
+
+
 def translit(s, to='rueng'):
     translations ={
         'rueng':{'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E', 'Ж': 'ZH', 
@@ -45,11 +48,9 @@ def signletter(fiolat='Familija Imya Otchestvo'):
 
 
 
-#path_to_echodata='http://localhost:5000' # development
-path_to_echodata='http://192.168.31.100:8080' #hospital
-
-#path_to_echoview='http://localhost:5001'
-path_to_echoview='http://192.168.31.100:8081' #hospital
-
-echoview_username='echoview@echoview.echoview'
-echoview_password='EcHoViEw'
+# Integration settings must be supplied by the deployment environment.  Do not
+# put PACS/clinical-network addresses or integration credentials in source.
+path_to_echodata = os.getenv('ECHODATA_URL', '')
+path_to_echoview = os.getenv('ECHOVIEW_URL', '')
+echoview_username = os.getenv('ECHOVIEW_USERNAME', '')
+echoview_password = os.getenv('ECHOVIEW_PASSWORD', '')
